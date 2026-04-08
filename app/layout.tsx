@@ -1,0 +1,84 @@
+import type { Metadata, Viewport } from 'next'
+import { Playfair_Display, Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
+import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer'
+import { CartProvider } from '@/lib/cart-context'
+
+const playfair = Playfair_Display({ 
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Kayseri Global Hub | Premium Turkish Furniture',
+    template: '%s | Kayseri Global Hub',
+  },
+  description: 'Discover premium Turkish furniture for homes and businesses. Expert craftsmanship meets modern design. B2B partnerships and B2C retail available worldwide.',
+  keywords: ['Turkish furniture', 'premium furniture', 'B2B furniture', 'hotel furniture', 'office furniture', 'home decor', 'luxury furniture'],
+  authors: [{ name: 'Kayseri Global Hub' }],
+  creator: 'Kayseri Global Hub',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://kayseriglobalhub.com',
+    siteName: 'Kayseri Global Hub',
+    title: 'Kayseri Global Hub | Premium Turkish Furniture',
+    description: 'Discover premium Turkish furniture for homes and businesses. Expert craftsmanship meets modern design.',
+    images: [
+      {
+        url: '/images/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Kayseri Global Hub - Premium Turkish Furniture',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kayseri Global Hub | Premium Turkish Furniture',
+    description: 'Discover premium Turkish furniture for homes and businesses.',
+    images: ['/images/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#5C4A3D',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+      <body className="font-sans antialiased">
+        <CartProvider>
+          <Header />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
+        <Analytics />
+      </body>
+    </html>
+  )
+}
