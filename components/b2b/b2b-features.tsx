@@ -13,7 +13,7 @@ const features = [
   },
   {
     icon: Truck,
-    title: 'Global Logistics',
+    title: 'Global بLogistics',
     description: 'Reliable worldwide shipping with comprehensive logistics support. We handle customs, insurance, and last-mile delivery.',
   },
   {
