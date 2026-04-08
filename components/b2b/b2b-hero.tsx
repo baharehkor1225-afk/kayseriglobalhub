@@ -40,7 +40,7 @@ export function B2BHero() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 h-14 px-8"
+                  className="w-full bg-transparent sm:w-auto border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 h-14 px-8"
                 >
                   Browse Catalog
                 </Button>
