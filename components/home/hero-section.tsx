@@ -85,7 +85,7 @@ export function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto border-background/30 text-background hover:bg-background/10 hover:text-background h-14 px-8 text-base group"
+                className="w-full bg-transparent sm:w-auto border-background/30 text-background hover:bg-background/10 hover:text-background h-14 px-8 text-base group"
               >
                 <Building2 className="mr-2 h-5 w-5" />
                 Partner With Us
