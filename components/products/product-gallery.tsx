@@ -91,18 +91,18 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         </div>
 
         {/* 3D/AR Controls */}
-        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-center gap-3">
+        <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
           <Button
             variant={is3DMode ? 'default' : 'secondary'}
             onClick={() => setIs3DMode(!is3DMode)}
-            className="gap-2"
+            className="gap-2 w-full"
           >
             <View className="h-4 w-4" />
             {is3DMode ? 'View Photos' : 'View in 3D'}
           </Button>
           {is3DMode && (
-            <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
-              AR button appears when model loads
+            <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg text-center">
+              📱 On mobile: Click "{Smartphone.name}" button to view in AR using your camera
             </div>
           )}
         </div>

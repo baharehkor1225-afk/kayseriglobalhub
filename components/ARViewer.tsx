@@ -2,8 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import dynamic from 'next/dynamic'
-import { Smartphone, Loader2, AlertCircle } from 'lucide-react'
+import { Smartphone, Loader2, AlertCircle, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useARSupport } from '@/hooks/use-ar-support'
 
 // Dynamically import model-viewer to avoid SSR issues
 const ModelViewer = dynamic(() => import('./ModelViewerWrapper'), {
@@ -42,6 +43,7 @@ export function ARViewer({
   const [isSupported, setIsSupported] = useState<boolean | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { isSupported: arSupported, isMobile } = useARSupport()
 
   useEffect(() => {
     // Check if WebGL is supported (basic check for 3D rendering)
@@ -110,6 +112,22 @@ export function ARViewer({
           className="w-full h-full rounded-lg"
         />
       </Suspense>
+
+      {/* AR Support Info */}
+      {isMobile === false && (
+        <div className="absolute top-4 left-4 flex items-start gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700">
+          <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span>AR available on mobile devices. Open this page on your phone to use AR.</span>
+        </div>
+      )}
+
+      {/* AR Support Warning */}
+      {isMobile === true && arSupported === false && (
+        <div className="absolute bottom-4 left-4 flex items-start gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700">
+          <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span>AR not supported on this device. Check your browser or device settings.</span>
+        </div>
+      )}
 
       {/* Loading overlay */}
       {isLoading && (
