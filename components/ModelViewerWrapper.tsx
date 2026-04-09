@@ -33,22 +33,18 @@ export default function ModelViewerWrapper({
 
     import('@google/model-viewer')
       .then(() => {
-        if (viewerRef.current) {
-          const element = viewerRef.current
-          const handleLoad = () => onLoad()
-          const handleError = (event: Event) => onError(event)
+        if (!viewerRef.current) return
 
-          element.addEventListener('load', handleLoad)
-          element.addEventListener('error', handleError)
-          element.onload = handleLoad
-          element.onerror = handleError
+        const element = viewerRef.current
+        const handleLoad = () => onLoad()
+        const handleError = (event: any) => onError(event)
 
-          cleanup = () => {
-            element.removeEventListener('load', handleLoad)
-            element.removeEventListener('error', handleError)
-            element.onload = null
-            element.onerror = null
-          }
+        element.addEventListener('load', handleLoad)
+        element.addEventListener('error', handleError)
+
+        cleanup = () => {
+          element.removeEventListener('load', handleLoad)
+          element.removeEventListener('error', handleError)
         }
       })
       .catch((err) => {
@@ -58,6 +54,8 @@ export default function ModelViewerWrapper({
     return () => cleanup()
   }, [onLoad, onError])
 
+  const iosSrc = src.endsWith('.glb') ? src.replace(/\.glb$/, '.usdz') : undefined
+
   return (
     <model-viewer
       ref={viewerRef}
@@ -65,6 +63,10 @@ export default function ModelViewerWrapper({
       alt={alt}
       ar
       ar-modes="webxr scene-viewer quick-look"
+      ios-src={iosSrc}
+      quick-look-browsers="safari"
+      interaction-prompt="auto"
+      reveal="auto"
       camera-controls={cameraControls}
       auto-rotate={autoRotate}
       shadow-intensity={shadowIntensity}
