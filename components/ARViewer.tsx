@@ -56,9 +56,23 @@ export function ARViewer({
   }
 
   const handleError = (event: any) => {
-    setError('Failed to load 3D model')
+    setError('Failed to load 3D model. Check that the .glb file exists and is accessible.')
     setIsLoading(false)
     console.error('Model viewer error:', event)
+  }
+
+  if (!src) {
+    return (
+      <div className={cn('w-full h-full flex items-center justify-center bg-secondary rounded-lg', className)}>
+        <div className="text-center p-6">
+          <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="font-medium mb-2">3D Model Not Available</h3>
+          <p className="text-sm text-muted-foreground">
+            This product does not have a 3D model configured yet.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   if (isSupported === false) {

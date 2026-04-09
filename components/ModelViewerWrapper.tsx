@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Smartphone, Loader2 } from 'lucide-react'
 
 interface ModelViewerWrapperProps {
@@ -26,24 +26,41 @@ export default function ModelViewerWrapper({
   onError,
   className,
 }: ModelViewerWrapperProps) {
-  useEffect(() => {
-    // Import model-viewer script dynamically
-    const script = document.createElement('script')
-    script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js'
-    script.type = 'module'
-    document.head.appendChild(script)
+  const viewerRef = useRef<any>(null)
 
-    return () => {
-      // Cleanup script when component unmounts
-      const existingScript = document.querySelector('script[src*="model-viewer"]')
-      if (existingScript) {
-        document.head.removeChild(existingScript)
-      }
-    }
-  }, [])
+  useEffect(() => {
+    let cleanup = () => {}
+
+    import('@google/model-viewer')
+      .then(() => {
+        if (viewerRef.current) {
+          const element = viewerRef.current
+          const handleLoad = () => onLoad()
+          const handleError = (event: Event) => onError(event)
+
+          element.addEventListener('load', handleLoad)
+          element.addEventListener('error', handleError)
+          element.onload = handleLoad
+          element.onerror = handleError
+
+          cleanup = () => {
+            element.removeEventListener('load', handleLoad)
+            element.removeEventListener('error', handleError)
+            element.onload = null
+            element.onerror = null
+          }
+        }
+      })
+      .catch((err) => {
+        onError(err)
+      })
+
+    return () => cleanup()
+  }, [onLoad, onError])
 
   return (
     <model-viewer
+      ref={viewerRef}
       src={src}
       alt={alt}
       ar
@@ -53,9 +70,7 @@ export default function ModelViewerWrapper({
       shadow-intensity={shadowIntensity}
       exposure={exposure}
       style={{ width: '100%', height: '100%' }}
-      class={className}
-      onLoad={onLoad}
-      onError={onError}
+      className={className}
     >
       {/* AR Button */}
       <button
