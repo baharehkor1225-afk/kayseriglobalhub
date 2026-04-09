@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Smartphone, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 interface ModelViewerWrapperProps {
   src: string
@@ -75,24 +75,6 @@ export default function ModelViewerWrapper({
         style={{ width: '100%', height: '100%' }}
         className={className}
       >
-        {/* AR Button */}
-        <button
-          slot="ar-button"
-          className="absolute bottom-4 right-4 bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors shadow-lg"
-        >
-          <Smartphone className="h-4 w-4" />
-          View in your space
-        </button>
-
-        {/* AR Button */}
-        <button
-          slot="ar-button"
-          className="absolute bottom-4 right-4 bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors shadow-lg"
-        >
-          <Smartphone className="h-4 w-4" />
-          View in your space
-        </button>
-
         {/* Loading poster */}
         <div slot="poster" className="w-full h-full bg-secondary rounded-lg flex items-center justify-center">
           <div className="text-center">
