@@ -55,6 +55,7 @@ export default function ModelViewerWrapper({
   }, [onLoad, onError])
 
   const iosSrc = src.endsWith('.glb') ? src.replace(/\.glb$/, '.usdz') : undefined
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
 
   return (
     <div className="relative w-full h-full">
@@ -98,14 +99,29 @@ export default function ModelViewerWrapper({
         </div>
       </model-viewer>
 
-      <button
-        type="button"
-        onClick={() => viewerRef.current?.activateAR?.()}
-        className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-lg transition hover:bg-accent/90"
-      >
-        <Smartphone className="h-4 w-4" />
-        Open AR Camera
-      </button>
+      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => viewerRef.current?.activateAR?.()}
+          className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-lg transition hover:bg-accent/90"
+        >
+          <Smartphone className="h-4 w-4" />
+          Open AR Camera
+        </button>
+        {isIOS && iosSrc ? (
+          <a
+            href={iosSrc}
+            rel="ar"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground/90 px-4 py-2 text-sm font-medium text-background shadow-lg transition hover:bg-foreground/80"
+          >
+            Quick Look (iOS)
+          </a>
+        ) : isIOS ? (
+          <div className="rounded-full bg-foreground/90 px-4 py-2 text-sm font-medium text-background shadow-lg">
+            iOS AR نیاز به فایل .usdz دارد
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
