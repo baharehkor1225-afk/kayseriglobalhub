@@ -35,10 +35,11 @@ Add the following GLB files to this directory:
 - Include materials and textures
 - Proper scale (real-world dimensions)
 - Optimized polygon count for web
+- AR works on both Android and iOS using WebXR and Scene Viewer
 
 ## Testing
 
 After adding models, test in:
 - Chrome/Edge (WebXR)
-- Safari (Quick Look)
+- Safari (WebXR)
 - Mobile browsers (Scene Viewer on Android)

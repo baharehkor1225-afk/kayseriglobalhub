@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Smartphone, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 interface ModelViewerWrapperProps {
   src: string
@@ -55,7 +55,6 @@ export default function ModelViewerWrapper({
   }, [onLoad, onError])
 
   const iosSrc = src.endsWith('.glb') ? src.replace(/\.glb$/, '.usdz') : undefined
-  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
 
   return (
     <div className="relative w-full h-full">
@@ -64,7 +63,7 @@ export default function ModelViewerWrapper({
         src={src}
         alt={alt}
         ar
-        ar-modes="webxr scene-viewer quick-look"
+        ar-modes="webxr scene-viewer"
         ios-src={iosSrc}
         quick-look-browsers="safari"
         interaction-prompt="auto"
@@ -76,15 +75,6 @@ export default function ModelViewerWrapper({
         style={{ width: '100%', height: '100%' }}
         className={className}
       >
-        {/* AR Button */}
-        <button
-          slot="ar-button"
-          className="absolute bottom-4 right-4 bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors shadow-lg"
-        >
-          <Smartphone className="h-4 w-4" />
-          View in your space
-        </button>
-
         {/* Loading poster */}
         <div slot="poster" className="w-full h-full bg-secondary rounded-lg flex items-center justify-center">
           <div className="text-center">
@@ -98,30 +88,6 @@ export default function ModelViewerWrapper({
           <div className="h-full bg-accent transition-all duration-300"></div>
         </div>
       </model-viewer>
-
-      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={() => viewerRef.current?.activateAR?.()}
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-lg transition hover:bg-accent/90"
-        >
-          <Smartphone className="h-4 w-4" />
-          Open AR Camera
-        </button>
-        {isIOS && iosSrc ? (
-          <a
-            href={iosSrc}
-            rel="ar"
-            className="inline-flex items-center gap-2 rounded-full bg-foreground/90 px-4 py-2 text-sm font-medium text-background shadow-lg transition hover:bg-foreground/80"
-          >
-            Quick Look (iOS)
-          </a>
-        ) : isIOS ? (
-          <div className="rounded-full bg-foreground/90 px-4 py-2 text-sm font-medium text-background shadow-lg">
-            iOS AR نیاز به فایل .usdz دارد
-          </div>
-        ) : null}
-      </div>
     </div>
   )
 }
