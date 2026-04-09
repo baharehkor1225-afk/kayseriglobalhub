@@ -10,14 +10,13 @@ export function useARSupport() {
       try {
         // Check if WebXR is available (Android)
         const xrSupport = navigator.xr ? await navigator.xr.isSessionSupported('immersive-ar') : false
-        
-        // Check if Scene Viewer is available (Android)
-        const isAndroid = /Android/i.test(navigator.userAgent)
-        
-        // Check if iOS and has AR support
-        const isIOS = /iOS|iPhone|iPad/i.test(navigator.userAgent)
-        const hasIOSAR = isIOS && 'ontouchstart' in window
-        
+
+        const userAgent = navigator.userAgent
+        const isAndroid = /Android/i.test(userAgent)
+        const isIOS = /iPad|iPhone|iPod/i.test(userAgent)
+        const isSafari = /Safari/i.test(userAgent) && !/CriOS|FxiOS|OPiOS|EdgiOS/i.test(userAgent)
+        const hasIOSAR = isIOS && isSafari
+
         const arSupported = xrSupport || isAndroid || hasIOSAR
         setIsSupported(arSupported)
       } catch (error) {

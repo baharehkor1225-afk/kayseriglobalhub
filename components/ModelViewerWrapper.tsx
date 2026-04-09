@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Smartphone, Loader2 } from 'lucide-react'
 
 interface ModelViewerWrapperProps {
@@ -28,6 +28,7 @@ export default function ModelViewerWrapper({
 }: ModelViewerWrapperProps) {
   const viewerRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [iosSrc, setIosSrc] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     let cleanup = () => {}
@@ -55,6 +56,26 @@ export default function ModelViewerWrapper({
     return () => cleanup()
   }, [onLoad, onError])
 
+  useEffect(() => {
+    const tryLoadUsd = async () => {
+      if (!src.toLowerCase().endsWith('.glb')) {
+        setIosSrc(undefined)
+        return
+      }
+
+      const usdzUrl = src.replace(/\.glb$/i, '.usdz')
+
+      try {
+        const response = await fetch(usdzUrl, { method: 'HEAD' })
+        setIosSrc(response.ok ? usdzUrl : undefined)
+      } catch {
+        setIosSrc(undefined)
+      }
+    }
+
+    tryLoadUsd()
+  }, [src])
+
   const handleARClick = () => {
     if (viewerRef.current) {
       // Trigger the AR experience
@@ -68,25 +89,23 @@ export default function ModelViewerWrapper({
     }
   }
 
-  // Don't convert to USDZ - just use the GLB file for both platforms
-  const iosSrc = src
-
   return (
     <div className="relative w-full h-full" ref={containerRef}>
       <model-viewer
         ref={viewerRef}
         src={src}
         alt={alt}
-        ar={true}
+        ar
         ar-modes="webxr scene-viewer quick-look"
-        ios-src={iosSrc}
+        ios-src={iosSrc ?? undefined}
         camera-controls={cameraControls}
         auto-rotate={autoRotate}
         shadow-intensity={shadowIntensity}
         exposure={exposure}
-        interaction-prompt="none"
+        interaction-prompt="auto"
         reveal="auto"
         touch-action="pan-y"
+        loading="lazy"
         style={{ width: '100%', height: '100%' }}
         className={className}
       >
