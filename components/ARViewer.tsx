@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { Smartphone, Loader2, AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 // Dynamically import model-viewer to avoid SSR issues
