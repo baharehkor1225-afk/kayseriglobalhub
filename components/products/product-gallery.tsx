@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronRight, View, RotateCcw, Smartphone, ZoomIn } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ARViewer } from '@/components/ARViewer'
 import type { Product } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
@@ -64,21 +65,15 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             </div>
           </>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            {/* 3D Model Placeholder */}
-            <div className="text-center p-6">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-accent/20 flex items-center justify-center">
-                <RotateCcw className="h-10 w-10 text-accent animate-spin" style={{ animationDuration: '3s' }} />
-              </div>
-              <p className="text-lg font-medium mb-2">3D Model Preview</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Interactive 3D view coming soon
-              </p>
-              <code className="text-xs bg-muted px-3 py-2 rounded-lg block">
-                Replace with GLB: {product.model3d}
-              </code>
-            </div>
-          </div>
+          <ARViewer
+            src={product.model3d || '/models/placeholder.glb'}
+            alt={product.name}
+            className="w-full h-full"
+            autoRotate={true}
+            cameraControls={true}
+            shadowIntensity={1}
+            exposure={1}
+          />
         )}
 
         {/* Badges */}
@@ -105,14 +100,11 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             <View className="h-4 w-4" />
             {is3DMode ? 'View Photos' : 'View in 3D'}
           </Button>
-          <Button
-            variant="secondary"
-            className="gap-2"
-            disabled
-          >
-            <Smartphone className="h-4 w-4" />
-            AR View
-          </Button>
+          {is3DMode && (
+            <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
+              AR button appears when model loads
+            </div>
+          )}
         </div>
       </div>
 

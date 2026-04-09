@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { View, RotateCcw, Smartphone, Maximize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ARViewer } from '@/components/ARViewer'
 import { cn } from '@/lib/utils'
 
 const previewProducts = [
@@ -11,12 +12,12 @@ const previewProducts = [
     id: '1',
     name: 'Ankara Modern Sofa',
     image: '/images/products/sofa-modern.jpg',
-    model3d: '/models/sofa-modern.glb', // Placeholder - replace with actual GLB
+    model3d: '/models/sofa-modern.glb',
   },
   {
     id: '2',
     name: 'Istanbul Dining Set',
-    image: '/images/products/dining-table.jpg',
+    image: '/images/products/dining-set.glb',
     model3d: '/models/dining-set.glb',
   },
   {
@@ -45,7 +46,7 @@ export function ARPreviewSection() {
             </h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
               Experience our furniture in stunning 3D detail. Rotate, zoom, and explore 
-              every angle before making your decision. Coming soon: AR mode to place 
+              every angle before making your decision. Use AR mode to place 
               furniture directly in your space using your smartphone.
             </p>
 
@@ -99,39 +100,27 @@ export function ARPreviewSection() {
             </div>
           </div>
 
-          {/* 3D Preview Area */}
-          <div className="relative">
-            <div className="relative aspect-square bg-secondary rounded-3xl overflow-hidden">
-              {/* Image Preview (placeholder for 3D) */}
-              <Image
-                src={activeProduct.image}
-                alt={activeProduct.name}
-                fill
-                className={cn(
-                  'object-contain p-8 transition-all duration-500',
-                  is3DMode ? 'scale-110' : ''
-                )}
-              />
-
-              {/* 3D Placeholder Overlay */}
-              {is3DMode && (
-                <div className="absolute inset-0 flex items-center justify-center bg-foreground/5 backdrop-blur-sm">
-                  <div className="text-center p-6">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-accent/20 flex items-center justify-center">
-                      <View className="h-8 w-8 text-accent animate-pulse" />
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      3D Model Loading...
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Replace with your GLB file at:
-                    </p>
-                    <code className="text-xs bg-muted px-2 py-1 rounded mt-2 inline-block">
-                      {activeProduct.model3d}
-                    </code>
-                  </div>
-                </div>
-              )}
+              {/* 3D Preview Area */}
+              <div className="relative">
+                <div className="relative aspect-square bg-secondary rounded-3xl overflow-hidden">
+                  {!is3DMode ? (
+                    <Image
+                      src={activeProduct.image}
+                      alt={activeProduct.name}
+                      fill
+                      className="object-contain p-8 transition-all duration-500"
+                    />
+                  ) : (
+                    <ARViewer
+                      src={activeProduct.model3d}
+                      alt={activeProduct.name}
+                      className="w-full h-full"
+                      autoRotate={true}
+                      cameraControls={true}
+                      shadowIntensity={1}
+                      exposure={1}
+                    />
+                  )}
 
               {/* Controls */}
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
@@ -143,14 +132,11 @@ export function ARPreviewSection() {
                   <View className="h-4 w-4" />
                   {is3DMode ? 'Exit 3D' : 'View in 3D'}
                 </Button>
-                <Button
-                  variant="secondary"
-                  className="gap-2"
-                  disabled
-                >
-                  <Smartphone className="h-4 w-4" />
-                  AR Mode (Coming Soon)
-                </Button>
+                {is3DMode && (
+                  <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
+                    AR button appears when model loads
+                  </div>
+                )}
               </div>
             </div>
 
@@ -158,7 +144,10 @@ export function ARPreviewSection() {
             <div className="mt-4 text-center">
               <h3 className="font-medium text-lg">{activeProduct.name}</h3>
               <p className="text-sm text-muted-foreground">
-                Click &quot;View in 3D&quot; for interactive preview
+                {is3DMode 
+                  ? 'Use AR button to place in your room • Rotate and zoom with mouse/touch'
+                  : 'Click "View in 3D" for interactive preview'
+                }
               </p>
             </div>
           </div>
