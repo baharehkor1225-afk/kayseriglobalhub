@@ -11,8 +11,8 @@ export default async function TestPage() {
   }
 
   const { data, error } = await supabase
-  .from('products')
-  .select('name')
+    .from('products')
+    .select('name')
 
   console.log("DATA:", data)
   console.log("ERROR:", error)
@@ -20,10 +20,12 @@ export default async function TestPage() {
   return (
     <div>
       <h1>Supabase Test Page</h1>
-      <h1>Supabase Test Page</h1>
-      <p>Check terminal / console</p>
+
       {error && <p>Error: {error.message}</p>}
-      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+
+      {data && data.map((item, index) => (
+        <p key={index}>{item.name}</p>
+      ))}
     </div>
   )
 }
