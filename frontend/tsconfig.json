@@ -22,22 +22,20 @@
         "name": "next"
       }
     ],
-    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": [
-        "./frontend/*"
+        "./*"
       ]
     }
   },
   "include": [
-    "app/**/*",
-    "components/**/*",
-    "lib/**/*",
-    "hooks/**/*"
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "frontend",
-    "backend"
+    "node_modules"
   ]
 }

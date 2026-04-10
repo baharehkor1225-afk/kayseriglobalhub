@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Upload, Send, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { submitB2BInquiry } from '@/lib/api'
 
 const projectTypes = [
   'Hotel / Hospitality',
@@ -43,11 +44,24 @@ export function B2BInquiryForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    // TODO: Connect to /api/inquiries endpoint
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    
+
+    const formData = new FormData(e.currentTarget)
+
+    const productInterest = formData.getAll('productInterest').map((value) => String(value))
+
+    await submitB2BInquiry({
+      companyName: String(formData.get('companyName') ?? ''),
+      contactName: String(formData.get('contactName') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      phone: formData.get('phone') ? String(formData.get('phone')) : undefined,
+      country: String(formData.get('country') ?? ''),
+      projectType: String(formData.get('projectType') ?? ''),
+      productInterest,
+      quantity: String(formData.get('quantity') ?? ''),
+      message: String(formData.get('message') ?? ''),
+      fileName: formData.get('attachment') && formData.get('attachment') instanceof File ? formData.get('attachment').name : undefined,
+    })
+
     setIsSubmitting(false)
     setIsSubmitted(true)
   }

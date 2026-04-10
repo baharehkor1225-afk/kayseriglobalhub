@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  shipped
+  delivered
+}
+
+model User {
+  id         String    @id @default(uuid())
+  email      String    @unique
+  name       String?
+  phone      String?
+  address    String?
+  orders     Order[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Product {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  description     String?
+  price           Decimal
+  bulkPrice       Decimal?
+  minBulkQuantity Int?
+  imageUrl        String?
+  images          Json     @default("[]")
+  model3d         String?
+  category        String?
+  roomType        String?
+  features        Json     @default("[]")
+  dimensions      Json?
+  materials       Json     @default("[]")
+  colors          Json     @default("[]")
+  inStock         Boolean  @default(true)
+  isNew           Boolean  @default(false)
+  isBestSeller    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  items      Json
+  total      Decimal
+  status     OrderStatus @default(pending)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model ContactMessage {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  subject     String
+  message     String
+  orderNumber String?
+  createdAt   DateTime @default(now())
+}
+
+model Inquiry {
+  id              String   @id @default(uuid())
+  companyName     String
+  contactName     String
+  email           String
+  phone           String?
+  country         String
+  projectType     String
+  productInterest Json
+  quantity        String
+  message         String
+  fileName        String?
+  createdAt       DateTime @default(now())
+}

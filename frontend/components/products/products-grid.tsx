@@ -3,19 +3,20 @@
 import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingBag, Eye, Filter, Grid, List, SlidersHorizontal } from 'lucide-react'
+import { ShoppingBag, Eye, Grid, List, SlidersHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { products } from '@/lib/data'
 import { useCart } from '@/lib/cart-context'
 import { cn } from '@/lib/utils'
+import type { Product } from '@/lib/data'
 
 interface ProductsGridProps {
+  products: Product[]
   category?: string
   filter?: string
   sort?: string
 }
 
-export function ProductsGrid({ category, filter, sort }: ProductsGridProps) {
+export function ProductsGrid({ products, category, filter, sort }: ProductsGridProps) {
   const { addItem } = useCart()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState(sort || 'featured')
@@ -149,7 +150,7 @@ export function ProductsGrid({ category, filter, sort }: ProductsGridProps) {
               <div
                 className={cn(
                   'relative overflow-hidden bg-muted',
-                  viewMode === 'grid' ? 'aspect-square' : 'w-48 h-48 flex-shrink-0'
+                  viewMode === 'grid' ? 'aspect-square' : 'w-48 h-48 shrink-0'
                 )}
               >
                 <Image

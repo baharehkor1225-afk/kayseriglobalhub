@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ProductsGrid } from '@/components/products/products-grid'
 import { ProductsHeader } from '@/components/products/products-header'
 import { ProductsFilters } from '@/components/products/products-filters'
+import { fetchProducts } from '@/lib/api'
 
 export const metadata: Metadata = {
   title: 'Shop Premium Furniture',
@@ -23,9 +24,18 @@ interface ProductsPageProps {
   }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams
-  
+  const products = await fetchProducts({
+    category: params.category,
+    filter: params.filter,
+    sort: params.sort,
+    minPrice: params.minPrice,
+    maxPrice: params.maxPrice,
+  })
+
   return (
     <div className="min-h-screen pt-20">
       <ProductsHeader />
@@ -40,6 +50,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </aside>
           <div className="lg:col-span-3">
             <ProductsGrid 
+              products={products}
               category={params.category}
               filter={params.filter}
               sort={params.sort}

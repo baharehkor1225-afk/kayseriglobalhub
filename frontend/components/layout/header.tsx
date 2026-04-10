@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X, ShoppingBag, Search, Building2, User } from 'lucide-react'
-import { Button } from '../../frontend/components/ui/button'
-import { useCart } from '../../frontend/lib/cart-context'
-import { CartDrawer } from '../../frontend/components/cart/cart-drawer'
-import { cn } from '../../frontend/lib/utils'
+import { Button } from '@/components/ui/button'
+import { useCart } from '@/lib/cart-context'
+import { CartDrawer } from '@/components/cart/cart-drawer'
+import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Home', href: '/' },

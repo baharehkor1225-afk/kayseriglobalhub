@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { products, roomSets } from '@/lib/data'
+import { roomSets } from '@/lib/data'
+import { fetchProductBySlug, fetchProducts } from '@/lib/api'
 import { ProductGallery } from '@/components/products/product-gallery'
 import { ProductInfo } from '@/components/products/product-info'
 import { ProductTabs } from '@/components/products/product-tabs'
@@ -11,9 +12,11 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  const product = products.find((p) => p.slug === slug)
+  const product = await fetchProductBySlug(slug)
 
   if (!product) {
     return { title: 'Product Not Found' }
@@ -35,31 +38,22 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-export async function generateStaticParams() {
-  return products.map((product) => ({
-    slug: product.slug,
-  }))
-}
-
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  const product = products.find((p) => p.slug === slug)
+  const product = await fetchProductBySlug(slug)
 
   if (!product) {
     notFound()
   }
 
-  // Find room sets that include this product
   const productRoomSets = roomSets.filter((set) =>
     set.products.includes(product.id)
   )
 
-  // Find related products (same category, excluding current)
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4)
+  const relatedProducts = (await fetchProducts({ category: product.category })).filter(
+    (p) => p.id !== product.id
+  )
 
-  // JSON-LD structured data for SEO
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -88,21 +82,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
       />
       <div className="min-h-screen pt-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {/* Main Product Section */}
           <div className="lg:grid lg:grid-cols-2 lg:gap-12">
             <ProductGallery product={product} />
             <ProductInfo product={product} />
           </div>
 
-          {/* Product Details Tabs */}
           <ProductTabs product={product} />
 
-          {/* Room Sets */}
           {productRoomSets.length > 0 && (
             <RoomSets sets={productRoomSets} currentProductId={product.id} />
           )}
 
-          {/* Related Products */}
           {relatedProducts.length > 0 && (
             <RelatedProducts products={relatedProducts} />
           )}

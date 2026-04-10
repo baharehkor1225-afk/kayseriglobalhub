@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Send, Loader2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { submitContactForm } from '@/lib/api'
 
 const subjects = [
   'Product Inquiry',
@@ -21,10 +22,17 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    // TODO: Connect to /api/contact endpoint
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    
+
+    const formData = new FormData(e.currentTarget)
+
+    await submitContactForm({
+      name: String(formData.get('name') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      subject: String(formData.get('subject') ?? ''),
+      message: String(formData.get('message') ?? ''),
+      orderNumber: formData.get('orderNumber') ? String(formData.get('orderNumber')) : undefined,
+    })
+
     setIsSubmitting(false)
     setIsSubmitted(true)
   }
