@@ -31,7 +31,7 @@ export default function ModelViewerWrapper({
   const [iosSrc, setIosSrc] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    let cleanup = () => {}
+    let cleanup = () => { }
 
     import('@google/model-viewer')
       .then(() => {
@@ -176,7 +176,7 @@ export default function ModelViewerWrapper({
             transition: 'width 0.3s ease',
           }}></div>
         </div>
-      {/* @ts-ignore */}
+        {/* @ts-ignore */}
       </model-viewer>
 
       {/* CSS for spin animation */}
