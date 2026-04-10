@@ -9,7 +9,7 @@ export default async function TestPage() {
       </div>
     )
   }const { data, error } = await supabase
-  .from('productds')
+  .from('products')
   .select('name')
 
 return (
