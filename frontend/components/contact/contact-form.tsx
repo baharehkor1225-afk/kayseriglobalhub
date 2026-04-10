@@ -60,7 +60,7 @@ export function ContactForm() {
   return (
     <div className="bg-secondary rounded-3xl p-8 md:p-12">
       <h2 className="font-serif text-2xl font-medium mb-6">Send Us a Message</h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid sm:grid-cols-2 gap-6">
           {/* Name */}

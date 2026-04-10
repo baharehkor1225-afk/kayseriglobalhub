@@ -84,7 +84,7 @@ export function B2BInquiryForm() {
             Thank You for Your Inquiry!
           </h2>
           <p className="mt-4 text-primary-foreground/80">
-            Our B2B team will review your project details and get back to you 
+            Our B2B team will review your project details and get back to you
             within 1-2 business days with a personalized proposal.
           </p>
           <Button
@@ -109,7 +109,7 @@ export function B2BInquiryForm() {
             Request a Quote
           </h2>
           <p className="mt-4 text-primary-foreground/80 max-w-xl mx-auto">
-            Tell us about your project and requirements. Our team will prepare 
+            Tell us about your project and requirements. Our team will prepare
             a customized proposal within 1-2 business days.
           </p>
         </div>
