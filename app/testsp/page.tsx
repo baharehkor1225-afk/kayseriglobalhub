@@ -10,7 +10,7 @@ export default async function TestPage() {
     )
   }
 
-  const { data, error } = await supabase.from('test').select('*')
+  const { data, error } = await supabase.from('products').select('*')
 
   console.log("DATA:", data)
   console.log("ERROR:", error)
