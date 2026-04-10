@@ -91,6 +91,7 @@ export default function ModelViewerWrapper({
 
   return (
     <div className="relative w-full h-full" ref={containerRef}>
+      {/* @ts-ignore */}
       <model-viewer
         ref={viewerRef}
         src={src}
@@ -175,6 +176,7 @@ export default function ModelViewerWrapper({
             transition: 'width 0.3s ease',
           }}></div>
         </div>
+      {/* @ts-ignore */}
       </model-viewer>
 
       {/* CSS for spin animation */}
