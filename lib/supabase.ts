@@ -1,18 +1,21 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 // Client (safe for Next.js)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
 
 // Server client (only use in API routes)
 export const supabaseServer = () => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!serviceKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
+  if (!url || !serviceKey) {
+    throw new Error('Missing Supabase environment variables')
   }
 
-  return createClient(supabaseUrl, serviceKey)
+  return createClient(url, serviceKey)
 }
