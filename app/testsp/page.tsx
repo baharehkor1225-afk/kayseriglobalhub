@@ -10,13 +10,16 @@ export default async function TestPage() {
     )
   }
 
-  const { data, error } = await supabase.from('products').select('*')
+  const { data, error } = await supabase
+  .from('products')
+  .select('name')
 
   console.log("DATA:", data)
   console.log("ERROR:", error)
 
   return (
     <div>
+      <h1>Supabase Test Page</h1>
       <h1>Supabase Test Page</h1>
       <p>Check terminal / console</p>
       {error && <p>Error: {error.message}</p>}
