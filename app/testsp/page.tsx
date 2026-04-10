@@ -8,24 +8,29 @@ export default async function TestPage() {
         <p>Supabase is not configured. Please add your environment variables to .env.local</p>
       </div>
     )
-  }
+  }const { data, error } = await supabase
+  .from('products')
+  .select('name')
 
-  const { data, error } = await supabase
-    .from('products')
-    .select('name')
+return (
+  <div>
+    <h1>Supabase Test Page</h1>
 
-  console.log("DATA:", data)
-  console.log("ERROR:", error)
+    <p>🔍 Status:</p>
 
-  return (
-    <div>
-      <h1>Supabase Test Page</h1>
+    {error && (
+      <p style={{ color: 'red' }}>
+        ❌ ERROR: {error.message}
+      </p>
+    )}
 
-      {error && <p>Error: {error.message}</p>}
+    {!error && data && (
+      <p style={{ color: 'green' }}>
+        ✅ Connected to database
+      </p>
+    )}
 
-      {data && data.map((item, index) => (
-        <p key={index}>{item.name}</p>
-      ))}
-    </div>
-  )
+    <pre>{JSON.stringify({ data, error }, null, 2)}</pre>
+  </div>
+)
 }
