@@ -1,6 +1,15 @@
 import { supabase } from '../../lib/supabase'
 
 export default async function TestPage() {
+  if (!supabase) {
+    return (
+      <div>
+        <h1>Supabase Test Page</h1>
+        <p>Supabase is not configured. Please add your environment variables to .env.local</p>
+      </div>
+    )
+  }
+
   const { data, error } = await supabase.from('test').select('*')
 
   console.log("DATA:", data)
@@ -10,6 +19,8 @@ export default async function TestPage() {
     <div>
       <h1>Supabase Test Page</h1>
       <p>Check terminal / console</p>
+      {error && <p>Error: {error.message}</p>}
+      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
     </div>
   )
 }
