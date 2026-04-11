@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { roomSets } from '@/lib/data'
-import { fetchProductBySlug, fetchProducts } from '@/lib/api'
+import { roomSets, products } from '@/lib/data'
 import { ProductGallery } from '@/components/products/product-gallery'
 import { ProductInfo } from '@/components/products/product-info'
 import { ProductTabs } from '@/components/products/product-tabs'
@@ -16,7 +15,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  const product = await fetchProductBySlug(slug)
+  const product = products.find(p => p.slug === slug)
 
   if (!product) {
     return { title: 'Product Not Found' }
@@ -40,7 +39,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  const product = await fetchProductBySlug(slug)
+  const product = products.find(p => p.slug === slug)
 
   if (!product) {
     notFound()
@@ -50,8 +49,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     set.products.includes(product.id)
   )
 
-  const relatedProducts = (await fetchProducts({ category: product.category })).filter(
-    (p) => p.id !== product.id
+  const relatedProducts = products.filter(
+    (p) => p.category === product.category && p.id !== product.id
   )
 
   const jsonLd = {
