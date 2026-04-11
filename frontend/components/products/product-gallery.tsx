@@ -37,7 +37,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           {product.category.replace('-', ' ')}
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground truncate max-w-[150px]">{product.name}</span>
+        <span className="text-foreground truncate max-w-37.5">{product.name}</span>
       </nav>
 
       {/* Main Image / 3D Viewer */}
@@ -119,7 +119,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                 setIs3DMode(false)
               }}
               className={cn(
-                'relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all',
+                'relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-all',
                 activeImage === index
                   ? 'border-accent ring-2 ring-accent/20'
                   : 'border-border hover:border-muted-foreground'
@@ -137,7 +137,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           <button
             onClick={() => setIs3DMode(true)}
             className={cn(
-              'relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all bg-muted flex items-center justify-center',
+              'relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-all bg-muted flex items-center justify-center',
               is3DMode
                 ? 'border-accent ring-2 ring-accent/20'
                 : 'border-border hover:border-muted-foreground'

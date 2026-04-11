@@ -131,7 +131,7 @@ export function ARViewer({
       {/* AR Support Info */}
       {isMobile === false && (
         <div className="absolute top-4 left-4 flex items-start gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700">
-          <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <Info className="h-4 w-4 shrink-0 mt-0.5" />
           <span>AR available on mobile devices. Open this page on your phone to use AR.</span>
         </div>
       )}
@@ -139,7 +139,7 @@ export function ARViewer({
       {/* AR Support Warning */}
       {isMobile === true && arSupported === false && (
         <div className="absolute bottom-4 left-4 flex items-start gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700">
-          <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <Info className="h-4 w-4 shrink-0 mt-0.5" />
           <span>
             AR is not available on this device/browser. On iPhone, Quick Look requires Safari and a matching .usdz file for the model.
           </span>

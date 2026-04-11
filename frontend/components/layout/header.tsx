@@ -140,7 +140,7 @@ export function Header() {
         <div
           className={cn(
             'lg:hidden overflow-hidden transition-all duration-300',
-            mobileMenuOpen ? 'max-h-[400px]' : 'max-h-0'
+            mobileMenuOpen ? 'max-h-100' : 'max-h-0'
           )}
         >
           <div className="bg-background border-t border-border px-4 py-4 space-y-4">

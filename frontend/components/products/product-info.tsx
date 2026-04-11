@@ -130,14 +130,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
           size="lg"
           variant="outline"
           className={cn(
-            'h-14 w-14 flex-shrink-0',
+            'h-14 w-14 shrink-0',
             isWishlisted && 'bg-red-50 border-red-200 text-red-500'
           )}
           onClick={() => setIsWishlisted(!isWishlisted)}
         >
           <Heart className={cn('h-5 w-5', isWishlisted && 'fill-current')} />
         </Button>
-        <Button size="lg" variant="outline" className="h-14 w-14 flex-shrink-0">
+        <Button size="lg" variant="outline" className="h-14 w-14 shrink-0">
           <Share2 className="h-5 w-5" />
         </Button>
       </div>
@@ -146,7 +146,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       <Link href="/b2b" className="block">
         <div className="p-4 bg-secondary rounded-xl border border-border hover:border-accent/50 transition-colors">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
               <Building2 className="h-5 w-5 text-accent" />
             </div>
             <div className="flex-1">

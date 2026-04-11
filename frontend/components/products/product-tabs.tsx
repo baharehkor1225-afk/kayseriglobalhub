@@ -49,7 +49,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
                 key={index}
                 className="flex items-start gap-3 p-4 bg-secondary rounded-xl"
               >
-                <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
                   <Check className="h-3.5 w-3.5 text-accent" />
                 </div>
                 <span className="text-sm">{feature}</span>
