@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { ProductsGrid } from '@/components/products/products-grid'
 import { ProductsHeader } from '@/components/products/products-header'
 import { ProductsFilters } from '@/components/products/products-filters'
-import { fetchProducts } from '@/lib/api'
+import { products as allProducts } from '@/lib/data'
+import type { Product } from '@/lib/data'
 
 export const metadata: Metadata = {
   title: 'Shop Premium Furniture',
@@ -28,13 +29,43 @@ export const dynamic = 'force-dynamic'
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams
-  const products = await fetchProducts({
-    category: params.category,
-    filter: params.filter,
-    sort: params.sort,
-    minPrice: params.minPrice,
-    maxPrice: params.maxPrice,
-  })
+
+  // Filter products based on search params
+  let filteredProducts = [...allProducts]
+
+  if (params.category) {
+    filteredProducts = filteredProducts.filter(p => p.category === params.category)
+  }
+
+  if (params.filter === 'new') {
+    filteredProducts = filteredProducts.filter(p => p.isNew)
+  } else if (params.filter === 'bestseller') {
+    filteredProducts = filteredProducts.filter(p => p.isBestSeller)
+  }
+
+  if (params.minPrice) {
+    filteredProducts = filteredProducts.filter(p => p.price >= Number(params.minPrice))
+  }
+
+  if (params.maxPrice) {
+    filteredProducts = filteredProducts.filter(p => p.price <= Number(params.maxPrice))
+  }
+
+  // Sort
+  if (params.sort === 'price-low') {
+    filteredProducts.sort((a, b) => a.price - b.price)
+  } else if (params.sort === 'price-high') {
+    filteredProducts.sort((a, b) => b.price - a.price)
+  } else if (params.sort === 'name') {
+    filteredProducts.sort((a, b) => a.name.localeCompare(b.name))
+  } else {
+    // featured default
+    filteredProducts.sort((a, b) => {
+      if (a.isBestSeller && !b.isBestSeller) return -1
+      if (!a.isBestSeller && b.isBestSeller) return 1
+      return 0
+    })
+  }
 
   return (
     <div className="min-h-screen pt-20">
@@ -50,7 +81,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </aside>
           <div className="lg:col-span-3">
             <ProductsGrid
-              products={products}
+              products={filteredProducts}
               category={params.category}
               filter={params.filter}
               sort={params.sort}
