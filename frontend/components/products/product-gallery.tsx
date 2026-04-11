@@ -55,7 +55,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               onClick={() => setIsZoomed(!isZoomed)}
               priority
             />
-            
+
             {/* Zoom hint */}
             <div className="absolute top-4 right-4">
               <div className="px-3 py-1.5 bg-background/80 backdrop-blur-sm rounded-full flex items-center gap-2 text-sm text-muted-foreground">

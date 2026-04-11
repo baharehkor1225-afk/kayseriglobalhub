@@ -152,7 +152,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="flex-1">
               <h4 className="font-medium text-sm">Need Bulk Quantities?</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Get up to 30% off on orders of {product.minBulkQuantity || 10}+ units. 
+                Get up to 30% off on orders of {product.minBulkQuantity || 10}+ units.
                 Perfect for hotels, offices, and commercial projects.
               </p>
               <span className="text-xs text-accent font-medium mt-2 inline-block">
