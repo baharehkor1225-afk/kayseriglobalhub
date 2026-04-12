@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ContactHero } from '@/components/contact/contact-hero'
 import { ContactForm } from '@/components/contact/contact-form'
 import { ContactInfo } from '@/components/contact/contact-info'
 import { ContactFAQ } from '@/components/contact/contact-faq'
@@ -15,21 +16,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="min-h-screen pt-20">
-      {/* Hero Section */}
-      <section className="bg-secondary py-16 border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="text-sm uppercase tracking-widest text-accent">Contact Us</span>
-            <h1 className="mt-4 font-serif text-4xl sm:text-5xl font-medium text-foreground">
-              Let&apos;s Start a Conversation
-            </h1>
-            <p className="mt-4 text-muted-foreground">
-              Have questions about our products, need design advice, or want to discuss 
-              a B2B partnership? We&apos;re here to help.
-            </p>
-          </div>
-        </div>
-      </section>
+      <ContactHero />
 
       {/* Contact Section */}
       <section className="py-16">

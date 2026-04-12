@@ -6,6 +6,8 @@ import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/lib/data'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
+import { getCategoryLabel, getRoomTypeLabel } from '@/lib/i18n'
 
 interface ProductsFiltersProps {
   initialCategory?: string
@@ -28,6 +30,8 @@ export function ProductsFilters({
   initialMinPrice,
   initialMaxPrice,
 }: ProductsFiltersProps) {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -63,14 +67,14 @@ export function ProductsFilters({
   return (
     <div className="sticky top-24 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-medium text-lg">Filters</h2>
+        <h2 className="font-medium text-lg">{l('Filters', 'Filtreler')}</h2>
         <Button
           variant="ghost"
           size="sm"
           onClick={clearFilters}
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          Clear All
+          {l('Clear All', 'Tumunu Temizle')}
         </Button>
       </div>
 
@@ -80,7 +84,7 @@ export function ProductsFilters({
           onClick={() => toggleSection('category')}
           className="flex items-center justify-between w-full text-left font-medium mb-4"
         >
-          Category
+          {l('Category', 'Kategori')}
           <ChevronDown
             className={cn(
               'h-4 w-4 transition-transform',
@@ -99,7 +103,7 @@ export function ProductsFilters({
                   : 'hover:bg-muted text-muted-foreground hover:text-foreground'
               )}
             >
-              All Categories
+              {l('All Categories', 'Tum Kategoriler')}
             </button>
             {categories.map((category) => (
               <button
@@ -112,7 +116,7 @@ export function ProductsFilters({
                     : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                 )}
               >
-                <span>{category.name}</span>
+                <span>{getCategoryLabel(language as 'en' | 'tr', category.slug, category.name)}</span>
                 <span className="text-xs">({category.productCount})</span>
               </button>
             ))}
@@ -126,7 +130,7 @@ export function ProductsFilters({
           onClick={() => toggleSection('price')}
           className="flex items-center justify-between w-full text-left font-medium mb-4"
         >
-          Price Range
+          {l('Price Range', 'Fiyat Araligi')}
           <ChevronDown
             className={cn(
               'h-4 w-4 transition-transform',
@@ -176,7 +180,7 @@ export function ProductsFilters({
           onClick={() => toggleSection('room')}
           className="flex items-center justify-between w-full text-left font-medium mb-4"
         >
-          Room Type
+          {l('Room Type', 'Oda Turu')}
           <ChevronDown
             className={cn(
               'h-4 w-4 transition-transform',
@@ -199,7 +203,7 @@ export function ProductsFilters({
                     : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                 )}
               >
-                {room}
+                {getRoomTypeLabel(language as 'en' | 'tr', room)}
               </button>
             ))}
           </div>

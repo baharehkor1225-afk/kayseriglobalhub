@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowRight, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { products, type Product } from '@/lib/data'
+import { useLanguage } from '@/components/language-provider'
 
 interface RoomSet {
   id: string
@@ -22,6 +23,9 @@ interface RoomSetsProps {
 }
 
 export function RoomSets({ sets, currentProductId }: RoomSetsProps) {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
+
   return (
     <section className="mt-16 border-t border-border pt-12">
       <div className="flex items-center gap-3 mb-8">
@@ -29,9 +33,9 @@ export function RoomSets({ sets, currentProductId }: RoomSetsProps) {
           <Package className="h-5 w-5 text-accent" />
         </div>
         <div>
-          <h2 className="font-serif text-2xl font-medium">Complete the Look</h2>
+          <h2 className="font-serif text-2xl font-medium">{l('Complete the Look', 'Gorunumu Tamamlayin')}</h2>
           <p className="text-sm text-muted-foreground">
-            Save more with our curated room sets
+            {l('Save more with our curated room sets', 'Ozenle secilen oda setleriyle daha fazla tasarruf edin')}
           </p>
         </div>
       </div>
@@ -58,14 +62,14 @@ export function RoomSets({ sets, currentProductId }: RoomSetsProps) {
                 />
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 bg-accent text-accent-foreground text-sm font-medium rounded-full">
-                    Save {savingsPercent}%
+                    {l('Save', 'Tasarruf')} {savingsPercent}%
                   </span>
                 </div>
               </div>
               <div className="p-6">
                 <h3 className="font-medium text-lg">{set.name}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Includes {setProducts.length} pieces
+                  {l('Includes', 'Icerir')} {setProducts.length} {l('pieces', 'parca')}
                 </p>
 
                 {/* Products in set */}
@@ -93,13 +97,13 @@ export function RoomSets({ sets, currentProductId }: RoomSetsProps) {
                     ${set.totalPrice.toLocaleString()}
                   </span>
                   <span className="text-sm text-green-600 font-medium">
-                    Save ${savings.toLocaleString()}
+                    {l('Save', 'Tasarruf')} ${savings.toLocaleString()}
                   </span>
                 </div>
 
                 <Link href={`/products?set=${set.slug}`}>
                   <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
-                    View Set Details
+                    {l('View Set Details', 'Set Detaylarini Gor')}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>

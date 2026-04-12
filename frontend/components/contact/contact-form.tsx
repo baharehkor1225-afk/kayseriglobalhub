@@ -4,18 +4,21 @@ import { useState } from 'react'
 import { Send, Loader2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { submitContactForm } from '@/lib/api'
+import { useLanguage } from '@/components/language-provider'
 
 const subjects = [
-  'Product Inquiry',
-  'Order Status',
-  'B2B Partnership',
-  'Design Consultation',
-  'Warranty & Returns',
-  'Technical Support',
-  'Other',
+  'contact.form.subject.productInquiry',
+  'contact.form.subject.orderStatus',
+  'contact.form.subject.b2bPartnership',
+  'contact.form.subject.designConsultation',
+  'contact.form.subject.warrantyReturns',
+  'contact.form.subject.technicalSupport',
+  'contact.form.subject.other',
 ]
 
 export function ContactForm() {
+  const { t } = useLanguage()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -43,15 +46,15 @@ export function ContactForm() {
         <div className="w-16 h-16 mx-auto rounded-full bg-accent flex items-center justify-center mb-6">
           <Check className="h-8 w-8 text-accent-foreground" />
         </div>
-        <h3 className="font-serif text-2xl font-medium">Message Sent!</h3>
+        <h3 className="font-serif text-2xl font-medium">{t('contact.form.successTitle')}</h3>
         <p className="mt-2 text-muted-foreground">
-          Thank you for reaching out. Our team will get back to you within 24 hours.
+          {t('contact.form.successDesc')}
         </p>
         <Button
           onClick={() => setIsSubmitted(false)}
           className="mt-6 bg-accent hover:bg-accent/90 text-accent-foreground"
         >
-          Send Another Message
+          {t('contact.form.successAction')}
         </Button>
       </div>
     )
@@ -59,14 +62,14 @@ export function ContactForm() {
 
   return (
     <div className="bg-secondary rounded-3xl p-8 md:p-12">
-      <h2 className="font-serif text-2xl font-medium mb-6">Send Us a Message</h2>
+      <h2 className="font-serif text-2xl font-medium mb-6">{t('contact.form.title')}</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid sm:grid-cols-2 gap-6">
           {/* Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-2">
-              Your Name *
+              {t('contact.form.name')}
             </label>
             <input
               type="text"
@@ -74,14 +77,14 @@ export function ContactForm() {
               name="name"
               required
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-              placeholder="John Doe"
+              placeholder={t('contact.form.placeholder.name')}
             />
           </div>
 
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email Address *
+              {t('contact.form.email')}
             </label>
             <input
               type="email"
@@ -89,7 +92,7 @@ export function ContactForm() {
               name="email"
               required
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-              placeholder="john@example.com"
+              placeholder={t('contact.form.placeholder.email')}
             />
           </div>
         </div>
@@ -98,21 +101,21 @@ export function ContactForm() {
           {/* Phone */}
           <div>
             <label htmlFor="phone" className="block text-sm font-medium mb-2">
-              Phone Number
+              {t('contact.form.phone')}
             </label>
             <input
               type="tel"
               id="phone"
               name="phone"
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-              placeholder="+1 (555) 000-0000"
+              placeholder={t('contact.form.placeholder.phone')}
             />
           </div>
 
           {/* Subject */}
           <div>
             <label htmlFor="subject" className="block text-sm font-medium mb-2">
-              Subject *
+              {t('contact.form.subject')}
             </label>
             <select
               id="subject"
@@ -120,10 +123,10 @@ export function ContactForm() {
               required
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
             >
-              <option value="">Select a subject</option>
+              <option value="">{t('contact.form.subjectPlaceholder')}</option>
               {subjects.map((subject) => (
                 <option key={subject} value={subject}>
-                  {subject}
+                  {t(subject)}
                 </option>
               ))}
             </select>
@@ -133,21 +136,21 @@ export function ContactForm() {
         {/* Order Number (optional) */}
         <div>
           <label htmlFor="orderNumber" className="block text-sm font-medium mb-2">
-            Order Number (if applicable)
+            {t('contact.form.orderNumber')}
           </label>
           <input
             type="text"
             id="orderNumber"
             name="orderNumber"
             className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-            placeholder="KGH-000000"
+            placeholder={t('contact.form.placeholder.orderNumber')}
           />
         </div>
 
         {/* Message */}
         <div>
           <label htmlFor="message" className="block text-sm font-medium mb-2">
-            Message *
+            {t('contact.form.message')}
           </label>
           <textarea
             id="message"
@@ -155,14 +158,14 @@ export function ContactForm() {
             required
             rows={5}
             className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
-            placeholder="How can we help you?"
+            placeholder={t('contact.form.placeholder.message')}
           />
         </div>
 
         {/* Submit */}
         <div className="flex items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            * Required fields. We typically respond within 24 hours.
+            {t('contact.form.footer')}
           </p>
           <Button
             type="submit"
@@ -172,12 +175,12 @@ export function ContactForm() {
             {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Sending...
+                {t('contact.form.sending')}
               </>
             ) : (
               <>
                 <Send className="h-4 w-4" />
-                Send Message
+                {t('contact.form.send')}
               </>
             )}
           </Button>

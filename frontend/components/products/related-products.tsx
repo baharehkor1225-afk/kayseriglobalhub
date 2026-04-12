@@ -6,17 +6,20 @@ import { ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Product } from '@/lib/data'
 import { useCart } from '@/lib/cart-context'
+import { useLanguage } from '@/components/language-provider'
 
 interface RelatedProductsProps {
   products: Product[]
 }
 
 export function RelatedProducts({ products }: RelatedProductsProps) {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
   const { addItem } = useCart()
 
   return (
     <section className="mt-16 border-t border-border pt-12">
-      <h2 className="font-serif text-2xl font-medium mb-8">You May Also Like</h2>
+      <h2 className="font-serif text-2xl font-medium mb-8">{l('You May Also Like', 'Bunlari da Begenebilirsiniz')}</h2>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
@@ -37,7 +40,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
               <div className="absolute top-3 left-3 flex flex-col gap-2">
                 {product.isNew && (
                   <span className="px-2 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full">
-                    New
+                      {l('New', 'Yeni')}
                   </span>
                 )}
               </div>
@@ -50,7 +53,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
                   onClick={() => addItem(product)}
                 >
                   <ShoppingBag className="h-4 w-4" />
-                  Quick Add
+                  {l('Quick Add', 'Hizli Ekle')}
                 </Button>
               </div>
             </div>

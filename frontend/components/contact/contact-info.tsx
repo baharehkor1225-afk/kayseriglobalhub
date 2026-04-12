@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 import { Mail, Phone, MapPin, Clock, Building2, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useLanguage } from '@/components/language-provider'
 
 const contactMethods = [
   {
@@ -34,18 +37,42 @@ const contactMethods = [
 ]
 
 export function ContactInfo() {
+  const { t } = useLanguage()
+
+  const localizedMethods = [
+    {
+      ...contactMethods[0],
+      title: t('contact.info.emailTitle'),
+      description: t('contact.info.emailDesc'),
+    },
+    {
+      ...contactMethods[1],
+      title: t('contact.info.callTitle'),
+      description: t('contact.info.callDesc'),
+    },
+    {
+      ...contactMethods[2],
+      title: t('contact.info.visitTitle'),
+      description: t('contact.info.visitDesc'),
+    },
+    {
+      ...contactMethods[3],
+      title: t('contact.info.hoursTitle'),
+      description: t('contact.info.hoursDesc'),
+    },
+  ]
+
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="font-serif text-2xl font-medium">Get in Touch</h2>
+        <h2 className="font-serif text-2xl font-medium">{t('contact.info.title')}</h2>
         <p className="mt-2 text-muted-foreground">
-          Choose the most convenient way to reach us. Our team is ready to assist 
-          with any questions.
+          {t('contact.info.subtitle')}
         </p>
       </div>
 
       <div className="space-y-6">
-        {contactMethods.map((method) => (
+        {localizedMethods.map((method) => (
           <div key={method.title} className="flex gap-4">
             <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
               <method.icon className="h-5 w-5 text-accent" />
@@ -75,13 +102,13 @@ export function ContactInfo() {
             <Building2 className="h-5 w-5 text-accent" />
           </div>
           <div>
-            <h3 className="font-medium">B2B Partnership?</h3>
+            <h3 className="font-medium">{t('contact.info.b2bTitle')}</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              For bulk orders and commercial projects, visit our dedicated B2B page.
+              {t('contact.info.b2bDesc')}
             </p>
             <Link href="/b2b" className="inline-block mt-3">
               <Button variant="outline" size="sm">
-                B2B Inquiries
+                {t('contact.info.b2bAction')}
               </Button>
             </Link>
           </div>
@@ -95,15 +122,15 @@ export function ContactInfo() {
             <MessageSquare className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-medium">Live Chat</h3>
+            <h3 className="font-medium">{t('contact.info.chatTitle')}</h3>
             <p className="text-sm text-primary-foreground/80 mt-1">
-              Get instant answers from our support team.
+              {t('contact.info.chatDesc')}
             </p>
             <Button
               size="sm"
               className="mt-3 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
             >
-              Start Chat
+              {t('contact.info.chatAction')}
             </Button>
           </div>
         </div>

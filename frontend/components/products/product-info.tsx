@@ -7,12 +7,16 @@ import { Button } from '@/components/ui/button'
 import type { Product } from '@/lib/data'
 import { useCart } from '@/lib/cart-context'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
+import { getRoomTypeLabel } from '@/lib/i18n'
 
 interface ProductInfoProps {
   product: Product
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
   const { addItem } = useCart()
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [quantity, setQuantity] = useState(1)
@@ -29,7 +33,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Category */}
       <div>
         <span className="text-sm uppercase tracking-widest text-accent">
-          {product.roomType}
+          {getRoomTypeLabel(language as 'en' | 'tr', product.roomType)}
         </span>
       </div>
 
@@ -53,7 +57,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <Building2 className="h-4 w-4 text-accent" />
             <span className="text-sm">
               B2B: <span className="font-medium">${product.bulkPrice.toLocaleString()}</span>
-              <span className="text-muted-foreground"> ({product.minBulkQuantity}+ units)</span>
+              <span className="text-muted-foreground"> ({product.minBulkQuantity}+ {l('units', 'adet')})</span>
             </span>
           </div>
         )}
@@ -62,7 +66,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Color Selection */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium">Color: <span className="text-muted-foreground">{selectedColor}</span></span>
+          <span className="text-sm font-medium">{l('Color', 'Renk')}: <span className="text-muted-foreground">{selectedColor}</span></span>
         </div>
         <div className="flex flex-wrap gap-3">
           {product.colors.map((color) => (
@@ -84,7 +88,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Quantity */}
       <div>
-        <span className="text-sm font-medium mb-3 block">Quantity</span>
+        <span className="text-sm font-medium mb-3 block">{l('Quantity', 'Adet')}</span>
         <div className="flex items-center gap-4">
           <div className="flex items-center border border-border rounded-lg">
             <button
@@ -106,10 +110,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
             {product.inStock ? (
               <span className="flex items-center gap-1 text-green-600">
                 <Check className="h-4 w-4" />
-                In Stock
+                {l('In Stock', 'Stokta Var')}
               </span>
             ) : (
-              'Out of Stock'
+              l('Out of Stock', 'Stokta Yok')
             )}
           </span>
         </div>
@@ -124,7 +128,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           disabled={!product.inStock}
         >
           <ShoppingBag className="h-5 w-5" />
-          Add to Cart - ${(product.price * quantity).toLocaleString()}
+          {l('Add to Cart', 'Sepete Ekle')} - ${(product.price * quantity).toLocaleString()}
         </Button>
         <Button
           size="lg"
@@ -150,13 +154,13 @@ export function ProductInfo({ product }: ProductInfoProps) {
               <Building2 className="h-5 w-5 text-accent" />
             </div>
             <div className="flex-1">
-              <h4 className="font-medium text-sm">Need Bulk Quantities?</h4>
+              <h4 className="font-medium text-sm">{l('Need Bulk Quantities?', 'Toplu Alim mi Yapacaksiniz?')}</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Get up to 30% off on orders of {product.minBulkQuantity || 10}+ units.
-                Perfect for hotels, offices, and commercial projects.
+                {l('Get up to 30% off on orders of', 'Siparislerde %30\'a varan indirim:')} {product.minBulkQuantity || 10}+ {l('units.', 'adet.')}
+                {l('Perfect for hotels, offices, and commercial projects.', 'Oteller, ofisler ve ticari projeler icin idealdir.')}
               </p>
               <span className="text-xs text-accent font-medium mt-2 inline-block">
-                Request B2B Quote &rarr;
+                {l('Request B2B Quote', 'B2B Teklif Al')} &rarr;
               </span>
             </div>
           </div>
@@ -166,9 +170,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
       {/* Trust Badges */}
       <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
         {[
-          { icon: Truck, label: 'Free Shipping', desc: 'On orders $500+' },
-          { icon: Shield, label: '10 Year Warranty', desc: 'Quality guaranteed' },
-          { icon: RotateCcw, label: '30 Day Returns', desc: 'Hassle-free' },
+          { icon: Truck, label: l('Free Shipping', 'Ucretsiz Kargo'), desc: l('On orders $500+', '$500+ siparislerde') },
+          { icon: Shield, label: l('10 Year Warranty', '10 Yil Garanti'), desc: l('Quality guaranteed', 'Kalite guvencesi') },
+          { icon: RotateCcw, label: l('30 Day Returns', '30 Gun Iade'), desc: l('Hassle-free', 'Kolay iade') },
         ].map((badge) => (
           <div key={badge.label} className="text-center">
             <badge.icon className="h-5 w-5 mx-auto mb-2 text-accent" />

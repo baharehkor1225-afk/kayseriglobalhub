@@ -5,6 +5,7 @@ import { Upload, Send, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { submitB2BInquiry } from '@/lib/api'
+import { useLanguage } from '@/components/language-provider'
 
 const projectTypes = [
   'Hotel / Hospitality',
@@ -37,9 +38,39 @@ const quantityRanges = [
 ]
 
 export function B2BInquiryForm() {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
+
+  const localizedProjectTypes = projectTypes.map((type) => {
+    const map: Record<string, string> = {
+      'Hotel / Hospitality': 'Otel / Konaklama',
+      'Real Estate Development': 'Gayrimenkul Gelistirme',
+      'Corporate Office': 'Kurumsal Ofis',
+      'Retail / Showroom': 'Perakende / Showroom',
+      'Interior Design Project': 'Ic Mimari Projesi',
+      'Educational Institution': 'Egitim Kurumu',
+      'Healthcare Facility': 'Saglik Kurumu',
+      'Restaurant / Cafe': 'Restoran / Kafe',
+      Other: 'Diger',
+    }
+    return l(type, map[type] ?? type)
+  })
+
+  const localizedProductCategories = productCategories.map((category) => {
+    const map: Record<string, string> = {
+      'Living Room': 'Oturma Odasi',
+      Bedroom: 'Yatak Odasi',
+      Dining: 'Yemek Odasi',
+      Office: 'Ofis',
+      Outdoor: 'Dis Mekan',
+      'Custom Design': 'Ozel Tasarim',
+    }
+    return l(category, map[category] ?? category)
+  })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -81,17 +112,19 @@ export function B2BInquiryForm() {
             <Check className="h-10 w-10 text-accent-foreground" />
           </div>
           <h2 className="font-serif text-3xl font-medium">
-            Thank You for Your Inquiry!
+            {l('Thank You for Your Inquiry!', 'Talebiniz Icin Tesekkurler!')}
           </h2>
           <p className="mt-4 text-primary-foreground/80">
-            Our B2B team will review your project details and get back to you
-            within 1-2 business days with a personalized proposal.
+            {l(
+              'Our B2B team will review your project details and get back to you within 1-2 business days with a personalized proposal.',
+              'B2B ekibimiz proje detaylarinizi inceleyip 1-2 is gunu icinde size ozel bir teklif ile geri donecektir.'
+            )}
           </p>
           <Button
             onClick={() => setIsSubmitted(false)}
             className="mt-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
           >
-            Submit Another Inquiry
+            {l('Submit Another Inquiry', 'Yeni Talep Gonder')}
           </Button>
         </div>
       </section>
@@ -103,14 +136,16 @@ export function B2BInquiryForm() {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="text-sm uppercase tracking-widest text-accent">
-            Get Started
+            {l('Get Started', 'Baslayin')}
           </span>
           <h2 className="mt-4 font-serif text-3xl sm:text-4xl font-medium">
-            Request a Quote
+            {l('Request a Quote', 'Teklif Talep Et')}
           </h2>
           <p className="mt-4 text-primary-foreground/80 max-w-xl mx-auto">
-            Tell us about your project and requirements. Our team will prepare
-            a customized proposal within 1-2 business days.
+            {l(
+              'Tell us about your project and requirements. Our team will prepare a customized proposal within 1-2 business days.',
+              'Projenizi ve gereksinimlerinizi bizimle paylasin. Ekibimiz 1-2 is gunu icinde size ozel bir teklif hazirlar.'
+            )}
           </p>
         </div>
 
@@ -119,7 +154,7 @@ export function B2BInquiryForm() {
             {/* Company Name */}
             <div>
               <label htmlFor="companyName" className="block text-sm font-medium mb-2">
-                Company Name *
+                {l('Company Name *', 'Sirket Adi *')}
               </label>
               <input
                 type="text"
@@ -127,14 +162,14 @@ export function B2BInquiryForm() {
                 name="companyName"
                 required
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
-                placeholder="Your company name"
+                placeholder={l('Your company name', 'Sirket adiniz')}
               />
             </div>
 
             {/* Contact Name */}
             <div>
               <label htmlFor="contactName" className="block text-sm font-medium mb-2">
-                Contact Name *
+                {l('Contact Name *', 'Yetkili Kisi *')}
               </label>
               <input
                 type="text"
@@ -142,14 +177,14 @@ export function B2BInquiryForm() {
                 name="contactName"
                 required
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
-                placeholder="Your full name"
+                placeholder={l('Your full name', 'Adiniz soyadiniz')}
               />
             </div>
 
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Business Email *
+                {l('Business Email *', 'Kurumsal E-posta *')}
               </label>
               <input
                 type="email"
@@ -164,21 +199,21 @@ export function B2BInquiryForm() {
             {/* Phone */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                Phone Number
+                {l('Phone Number', 'Telefon Numarasi')}
               </label>
               <input
                 type="tel"
                 id="phone"
                 name="phone"
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
-                placeholder="+1 (555) 000-0000"
+                placeholder={l('+1 (555) 000-0000', '+90 5xx xxx xx xx')}
               />
             </div>
 
             {/* Country */}
             <div>
               <label htmlFor="country" className="block text-sm font-medium mb-2">
-                Country *
+                {l('Country *', 'Ulke *')}
               </label>
               <input
                 type="text"
@@ -186,14 +221,14 @@ export function B2BInquiryForm() {
                 name="country"
                 required
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
-                placeholder="Your country"
+                placeholder={l('Your country', 'Ulkeniz')}
               />
             </div>
 
             {/* Project Type */}
             <div>
               <label htmlFor="projectType" className="block text-sm font-medium mb-2">
-                Project Type *
+                {l('Project Type *', 'Proje Turu *')}
               </label>
               <select
                 id="projectType"
@@ -201,10 +236,10 @@ export function B2BInquiryForm() {
                 required
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground focus:outline-none focus:border-accent"
               >
-                <option value="">Select project type</option>
+                <option value="">{l('Select project type', 'Proje turu secin')}</option>
                 {projectTypes.map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {l(type, localizedProjectTypes[projectTypes.indexOf(type)])}
                   </option>
                 ))}
               </select>
@@ -213,7 +248,7 @@ export function B2BInquiryForm() {
             {/* Product Interest */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Product Interest *
+                {l('Product Interest *', 'Urun Ilgisi *')}
               </label>
               <div className="flex flex-wrap gap-2">
                 {productCategories.map((category) => (
@@ -228,7 +263,7 @@ export function B2BInquiryForm() {
                       className="peer sr-only"
                     />
                     <span className="inline-block px-3 py-1.5 text-sm border border-primary-foreground/20 rounded-full peer-checked:bg-accent peer-checked:text-accent-foreground peer-checked:border-accent transition-colors">
-                      {category}
+                      {l(category, localizedProductCategories[productCategories.indexOf(category)])}
                     </span>
                   </label>
                 ))}
@@ -238,7 +273,7 @@ export function B2BInquiryForm() {
             {/* Quantity Range */}
             <div>
               <label htmlFor="quantity" className="block text-sm font-medium mb-2">
-                Estimated Quantity *
+                {l('Estimated Quantity *', 'Tahmini Miktar *')}
               </label>
               <select
                 id="quantity"
@@ -246,7 +281,7 @@ export function B2BInquiryForm() {
                 required
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground focus:outline-none focus:border-accent"
               >
-                <option value="">Select quantity range</option>
+                <option value="">{l('Select quantity range', 'Miktar araligi secin')}</option>
                 {quantityRanges.map((range) => (
                   <option key={range} value={range}>
                     {range}
@@ -258,7 +293,7 @@ export function B2BInquiryForm() {
             {/* Message */}
             <div className="md:col-span-2">
               <label htmlFor="message" className="block text-sm font-medium mb-2">
-                Project Details *
+                {l('Project Details *', 'Proje Detaylari *')}
               </label>
               <textarea
                 id="message"
@@ -266,14 +301,14 @@ export function B2BInquiryForm() {
                 required
                 rows={4}
                 className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-xl text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent resize-none"
-                placeholder="Tell us about your project, timeline, specific requirements..."
+                placeholder={l('Tell us about your project, timeline, specific requirements...', 'Proje kapsamini, zaman planini ve ozel beklentilerinizi yazin...')}
               />
             </div>
 
             {/* File Upload */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-2">
-                Upload Project Files (Optional)
+                {l('Upload Project Files (Optional)', 'Proje Dosyasi Yukle (Opsiyonel)')}
               </label>
               <div className="relative">
                 <input
@@ -295,7 +330,7 @@ export function B2BInquiryForm() {
                 >
                   <Upload className="h-5 w-5" />
                   <span className="text-sm">
-                    {fileName || 'Drop files here or click to upload (PDF, DOC, images)'}
+                    {fileName || l('Drop files here or click to upload (PDF, DOC, images)', 'Dosyalari buraya birakin veya yuklemek icin tiklayin (PDF, DOC, gorsel)')}
                   </span>
                 </label>
               </div>
@@ -305,7 +340,7 @@ export function B2BInquiryForm() {
           {/* Submit */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-primary-foreground/60 text-center sm:text-left">
-              By submitting, you agree to our privacy policy and terms of service.
+              {l('By submitting, you agree to our privacy policy and terms of service.', 'Gondererek gizlilik politikasi ve hizmet sartlarini kabul etmis olursunuz.')}
             </p>
             <Button
               type="submit"
@@ -315,12 +350,12 @@ export function B2BInquiryForm() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Submitting...
+                  {l('Submitting...', 'Gonderiliyor...')}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4" />
-                  Submit Inquiry
+                  {l('Submit Inquiry', 'Talep Gonder')}
                 </>
               )}
             </Button>

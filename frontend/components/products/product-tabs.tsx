@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Check, Ruler, Palette, FileText } from 'lucide-react'
 import type { Product } from '@/lib/data'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
 
 interface ProductTabsProps {
   product: Product
@@ -17,13 +18,25 @@ const tabs = [
 ]
 
 export function ProductTabs({ product }: ProductTabsProps) {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
   const [activeTab, setActiveTab] = useState('features')
+
+  const localizedTabs = tabs.map((tab) => {
+    const map: Record<string, [string, string]> = {
+      Features: ['Features', 'Ozellikler'],
+      Dimensions: ['Dimensions', 'Olculer'],
+      Materials: ['Materials', 'Malzemeler'],
+      'Care Guide': ['Care Guide', 'Bakim Rehberi'],
+    }
+    return { ...tab, label: l(...(map[tab.label] ?? [tab.label, tab.label])) }
+  })
 
   return (
     <div className="mt-16 border-t border-border pt-12">
       {/* Tab Navigation */}
       <div className="flex overflow-x-auto border-b border-border">
-        {tabs.map((tab) => (
+        {localizedTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -62,20 +75,20 @@ export function ProductTabs({ product }: ProductTabsProps) {
           <div className="max-w-md">
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
-                <span className="text-muted-foreground">Width</span>
+                <span className="text-muted-foreground">{l('Width', 'Genislik')}</span>
                 <span className="font-medium">{product.dimensions.width} cm</span>
               </div>
               <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
-                <span className="text-muted-foreground">Height</span>
+                <span className="text-muted-foreground">{l('Height', 'Yukseklik')}</span>
                 <span className="font-medium">{product.dimensions.height} cm</span>
               </div>
               <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
-                <span className="text-muted-foreground">Depth</span>
+                <span className="text-muted-foreground">{l('Depth', 'Derinlik')}</span>
                 <span className="font-medium">{product.dimensions.depth} cm</span>
               </div>
             </div>
             <p className="mt-6 text-sm text-muted-foreground">
-              * All dimensions are approximate and may vary slightly due to handcrafted nature.
+              {l('* All dimensions are approximate and may vary slightly due to handcrafted nature.', '* Tum olculer yaklasiktir; el isciligi nedeniyle kucuk farkliliklar olabilir.')}
             </p>
           </div>
         )}
@@ -93,13 +106,13 @@ export function ProductTabs({ product }: ProductTabsProps) {
                   </div>
                   <h4 className="font-medium">{material}</h4>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Premium quality material sourced responsibly.
+                    {l('Premium quality material sourced responsibly.', 'Sorumlu tedarik edilen premium kalite malzeme.')}
                   </p>
                 </div>
               ))}
             </div>
             <p className="mt-6 text-sm text-muted-foreground">
-              All materials are ethically sourced and meet international quality standards.
+              {l('All materials are ethically sourced and meet international quality standards.', 'Tum malzemeler etik sekilde tedarik edilir ve uluslararasi kalite standartlarini karsilar.')}
             </p>
           </div>
         )}
@@ -108,21 +121,21 @@ export function ProductTabs({ product }: ProductTabsProps) {
           <div className="prose prose-sm max-w-none">
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="p-6 bg-secondary rounded-xl">
-                <h4 className="font-medium mb-3">Daily Care</h4>
+                <h4 className="font-medium mb-3">{l('Daily Care', 'Gunluk Bakim')}</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>Dust regularly with a soft, dry cloth</li>
-                  <li>Avoid direct sunlight exposure</li>
-                  <li>Use coasters for beverages</li>
-                  <li>Rotate cushions periodically</li>
+                  <li>{l('Dust regularly with a soft, dry cloth', 'Yumusak ve kuru bir bezle duzenli toz alin')}</li>
+                  <li>{l('Avoid direct sunlight exposure', 'Dogrudan gunes isigindan kacinin')}</li>
+                  <li>{l('Use coasters for beverages', 'Icecekler icin bardak altligi kullanin')}</li>
+                  <li>{l('Rotate cushions periodically', 'Minderleri periyodik olarak cevirin')}</li>
                 </ul>
               </div>
               <div className="p-6 bg-secondary rounded-xl">
-                <h4 className="font-medium mb-3">Deep Cleaning</h4>
+                <h4 className="font-medium mb-3">{l('Deep Cleaning', 'Derin Temizlik')}</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>Use manufacturer-approved cleaners</li>
-                  <li>Test on hidden area first</li>
-                  <li>Professional cleaning recommended yearly</li>
-                  <li>Avoid harsh chemicals and abrasives</li>
+                  <li>{l('Use manufacturer-approved cleaners', 'Uretici onayli temizleyiciler kullanin')}</li>
+                  <li>{l('Test on hidden area first', 'Once gorunmeyen bir alanda test edin')}</li>
+                  <li>{l('Professional cleaning recommended yearly', 'Yilda bir profesyonel temizlik onerilir')}</li>
+                  <li>{l('Avoid harsh chemicals and abrasives', 'Sert kimyasallardan ve asindiricilardan kacinin')}</li>
                 </ul>
               </div>
             </div>

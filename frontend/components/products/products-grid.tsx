@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { useCart } from '@/lib/cart-context'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/lib/data'
+import { useLanguage } from '@/components/language-provider'
+import { getRoomTypeLabel } from '@/lib/i18n'
 
 interface ProductsGridProps {
   products: Product[]
@@ -17,6 +19,8 @@ interface ProductsGridProps {
 }
 
 export function ProductsGrid({ products, category, filter, sort }: ProductsGridProps) {
+  const { language } = useLanguage()
+  const l = (en: string, tr: string) => (language === 'tr' ? tr : en)
   const { addItem } = useCart()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState(sort || 'featured')
@@ -72,27 +76,27 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
           >
             <SlidersHorizontal className="h-4 w-4" />
-            Filters
+            {l('Filters', 'Filtreler')}
           </Button>
 
           <p className="text-sm text-muted-foreground">
-            Showing <span className="font-medium text-foreground">{filteredProducts.length}</span> products
+            {l('Showing', 'Gosterilen')} <span className="font-medium text-foreground">{filteredProducts.length}</span> {l('products', 'urun')}
           </p>
         </div>
 
         <div className="flex items-center gap-4">
           {/* Sort */}
           <div className="hidden sm:flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Sort by:</span>
+            <span className="text-sm text-muted-foreground">{l('Sort by:', 'Sirala:')}</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="text-sm bg-transparent border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
             >
-              <option value="featured">Featured</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="name">Name</option>
+              <option value="featured">{l('Featured', 'One Cikanlar')}</option>
+              <option value="price-low">{l('Price: Low to High', 'Fiyat: Dusukten Yuksege')}</option>
+              <option value="price-high">{l('Price: High to Low', 'Fiyat: Yuksekten Dusuge')}</option>
+              <option value="name">{l('Name', 'Isim')}</option>
             </select>
           </div>
 
@@ -123,10 +127,10 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
       {/* Products */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-muted-foreground">No products found matching your criteria.</p>
+          <p className="text-muted-foreground">{l('No products found matching your criteria.', 'Kriterlerinize uygun urun bulunamadi.')}</p>
           <Link href="/products">
             <Button variant="outline" className="mt-4">
-              Clear Filters
+              {l('Clear Filters', 'Filtreleri Temizle')}
             </Button>
           </Link>
         </div>
@@ -164,12 +168,12 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
                   {product.isNew && (
                     <span className="px-2 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full">
-                      New
+                      {l('New', 'Yeni')}
                     </span>
                   )}
                   {product.isBestSeller && (
                     <span className="px-2 py-1 bg-foreground text-background text-xs font-medium rounded-full">
-                      Best Seller
+                      {l('Best Seller', 'Cok Satan')}
                     </span>
                   )}
                 </div>
@@ -203,7 +207,7 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
               <div className={cn('p-5', viewMode === 'list' ? 'flex-1 flex flex-col justify-between' : '')}>
                 <div>
                   <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                    {product.roomType}
+                    {getRoomTypeLabel(language as 'en' | 'tr', product.roomType)}
                   </span>
                   <Link href={`/products/${product.slug}`}>
                     <h3 className="mt-1 font-medium text-foreground hover:text-accent transition-colors line-clamp-1">
@@ -224,7 +228,7 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
                     </span>
                     {product.bulkPrice && (
                       <span className="block text-xs text-muted-foreground mt-0.5">
-                        B2B from ${product.bulkPrice.toLocaleString()}
+                        {l('B2B from', 'B2B baslangic')} ${product.bulkPrice.toLocaleString()}
                       </span>
                     )}
                   </div>
@@ -232,7 +236,7 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
                     <div className="flex gap-2">
                       <Link href={`/products/${product.slug}`}>
                         <Button variant="outline" size="sm">
-                          View Details
+                          {l('View Details', 'Detaylari Gor')}
                         </Button>
                       </Link>
                       <Button
@@ -240,7 +244,7 @@ export function ProductsGrid({ products, category, filter, sort }: ProductsGridP
                         className="bg-accent text-accent-foreground hover:bg-accent/90"
                         onClick={() => addItem(product)}
                       >
-                        Add to Cart
+                        {l('Add to Cart', 'Sepete Ekle')}
                       </Button>
                     </div>
                   )}
