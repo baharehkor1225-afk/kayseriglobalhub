@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import { B2BHero } from '@/components/b2b/b2b-hero'
 import { B2BFeatures } from '@/components/b2b/b2b-features'
 import { B2BSectors } from '@/components/b2b/b2b-sectors'
