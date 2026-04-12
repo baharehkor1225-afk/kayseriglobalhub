@@ -90,7 +90,7 @@ export function B2BInquiryForm() {
       productInterest,
       quantity: String(formData.get('quantity') ?? ''),
       message: String(formData.get('message') ?? ''),
-      fileName: formData.get('attachment') && formData.get('attachment') instanceof File ? formData.get('attachment').name : undefined,
+      fileName: (() => { const a = formData.get('attachment'); return a instanceof File ? a.name : undefined })(),
     })
 
     setIsSubmitting(false)

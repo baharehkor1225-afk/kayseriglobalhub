@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function B2BPage() {
   return (
-    <div className="min-h-screen pt-20">
+     <div className="min-h-screen pt-20 overflow-x-hidden">
       <B2BHero />
       <B2BStats />
       <B2BFeatures />

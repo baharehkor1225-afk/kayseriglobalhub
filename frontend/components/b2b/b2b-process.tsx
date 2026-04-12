@@ -103,12 +103,7 @@ export function B2BProcess() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {localizedSteps.map((step, index) => (
             <div key={step.title} className="relative">
-              {/* Connector line */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-full w-full h-px bg-border -translate-x-1/2 z-0" />
-              )}
-              
-              <div className="relative bg-secondary p-6 rounded-2xl border border-border">
+              <div className="bg-secondary p-6 rounded-2xl border border-border">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-12 h-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center font-medium">
