@@ -1,12 +1,17 @@
+'use client'
+
 import { partners } from '@/lib/data'
+import { useLanguage } from '@/components/language-provider'
 
 export function PartnersSection() {
+  const { t } = useLanguage()
+
   return (
     <section className="py-16 bg-background border-y border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <span className="text-sm uppercase tracking-widest text-muted-foreground">
-            Trusted by Industry Leaders
+            {t('home.partners.title')}
           </span>
         </div>
 
@@ -31,7 +36,7 @@ export function PartnersSection() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-8">
-          Join 500+ businesses worldwide who trust KGH for their furniture needs
+          {t('home.partners.subtitle')}
         </p>
       </div>
     </section>

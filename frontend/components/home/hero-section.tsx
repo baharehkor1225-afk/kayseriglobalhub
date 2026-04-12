@@ -6,9 +6,11 @@ import Link from 'next/link'
 import { ArrowRight, Building2, ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
 
 export function HeroSection() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const { t } = useLanguage()
 
   useEffect(() => {
     setIsLoaded(true)
@@ -39,7 +41,7 @@ export function HeroSection() {
             )}
           >
             <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-            Premium Turkish Craftsmanship Since 1985
+            {t('home.hero.badge')}
           </div>
 
           {/* Headline */}
@@ -49,8 +51,8 @@ export function HeroSection() {
               isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             )}
           >
-            <span className="text-balance">Timeless Furniture for</span>{' '}
-            <span className="text-accent">Modern Living</span>
+            <span className="text-balance">{t('home.hero.title1')}</span>{' '}
+            <span className="text-accent">{t('home.hero.title2')}</span>
           </h1>
 
           {/* Subtitle */}
@@ -60,8 +62,7 @@ export function HeroSection() {
               isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             )}
           >
-            From intimate homes to grand hotels, we craft furniture that tells your story. 
-            Experience the perfect blend of tradition and innovation.
+            {t('home.hero.subtitle')}
           </p>
 
           {/* Dual CTAs */}
@@ -77,7 +78,7 @@ export function HeroSection() {
                 className="w-full sm:w-auto bg-background text-foreground hover:bg-background/90 h-14 px-8 text-base group"
               >
                 <ShoppingBag className="mr-2 h-5 w-5" />
-                Shop Products
+                {t('home.hero.shop')}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -88,7 +89,7 @@ export function HeroSection() {
                 className="w-full bg-transparent sm:w-auto border-background/30 text-background hover:bg-background/10 hover:text-background h-14 px-8 text-base group"
               >
                 <Building2 className="mr-2 h-5 w-5" />
-                Partner With Us
+                {t('home.hero.partner')}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -102,9 +103,9 @@ export function HeroSection() {
             )}
           >
             {[
-              { value: '38+', label: 'Years of Excellence' },
-              { value: '50+', label: 'Countries Served' },
-              { value: '10K+', label: 'Projects Completed' },
+              { value: '38+', label: t('home.hero.years') },
+              { value: '50+', label: t('home.hero.countries') },
+              { value: '10K+', label: t('home.hero.projects') },
             ].map((stat) => (
               <div key={stat.label} className="text-center sm:text-left">
                 <div className="font-serif text-3xl sm:text-4xl font-medium text-background">
@@ -120,7 +121,7 @@ export function HeroSection() {
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="flex flex-col items-center gap-2 text-background/60">
-          <span className="text-xs uppercase tracking-widest">Scroll</span>
+          <span className="text-xs uppercase tracking-widest">{t('home.hero.scroll')}</span>
           <div className="w-px h-12 bg-gradient-to-b from-background/60 to-transparent" />
         </div>
       </div>

@@ -5,22 +5,25 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { categories } from '@/lib/data'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
+import { getCategoryLabel } from '@/lib/i18n'
 
 export function CategoriesSection() {
+  const { language, t } = useLanguage()
+
   return (
     <section className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-sm uppercase tracking-widest text-accent">
-            Collections
+            {t('home.categories.badge')}
           </span>
           <h2 className="mt-4 font-serif text-3xl sm:text-4xl font-medium text-foreground text-balance">
-            Explore Our Categories
+            {t('home.categories.title')}
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Discover furniture crafted for every room in your space. 
-            From living rooms to offices, find pieces that define your style.
+            {t('home.categories.subtitle')}
           </p>
         </div>
 
@@ -54,7 +57,7 @@ export function CategoriesSection() {
               <div className="absolute inset-0 p-6 flex flex-col justify-end">
                 <div className="transform transition-transform duration-300 group-hover:translate-y-[-8px]">
                   <span className="text-xs text-background/70 uppercase tracking-wider">
-                    {category.productCount} Products
+                    {category.productCount} {t('home.categories.products')}
                   </span>
                   <h3
                     className={cn(
@@ -62,7 +65,7 @@ export function CategoriesSection() {
                       index === 0 ? 'text-3xl' : 'text-xl'
                     )}
                   >
-                    {category.name}
+                    {getCategoryLabel(language, category.slug, category.name)}
                   </h3>
                   <p
                     className={cn(
@@ -74,7 +77,7 @@ export function CategoriesSection() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 mt-4 text-background text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span>Explore Collection</span>
+                  <span>{t('home.categories.explore')}</span>
                   <ArrowRight className="h-4 w-4" />
                 </div>
               </div>

@@ -6,10 +6,12 @@ import { ArrowRight, ShoppingBag, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { products } from '@/lib/data'
 import { useCart } from '@/lib/cart-context'
-import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
+import { getRoomTypeLabel } from '@/lib/i18n'
 
 export function FeaturedProducts() {
   const { addItem } = useCart()
+  const { language, t } = useLanguage()
   const featuredProducts = products.filter(p => p.isBestSeller || p.isNew).slice(0, 4)
 
   return (
@@ -19,15 +21,15 @@ export function FeaturedProducts() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
           <div>
             <span className="text-sm uppercase tracking-widest text-accent">
-              Curated Selection
+              {t('home.featured.badge')}
             </span>
             <h2 className="mt-4 font-serif text-3xl sm:text-4xl font-medium text-foreground">
-              Featured Products
+              {t('home.featured.title')}
             </h2>
           </div>
           <Link href="/products">
             <Button variant="outline" className="group">
-              View All Products
+              {t('home.featured.viewAll')}
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
@@ -53,12 +55,12 @@ export function FeaturedProducts() {
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                   {product.isNew && (
                     <span className="px-3 py-1 bg-accent text-accent-foreground text-xs font-medium rounded-full">
-                      New
+                      {t('home.featured.new')}
                     </span>
                   )}
                   {product.isBestSeller && (
                     <span className="px-3 py-1 bg-foreground text-background text-xs font-medium rounded-full">
-                      Best Seller
+                      {t('home.featured.bestSeller')}
                     </span>
                   )}
                 </div>
@@ -86,7 +88,7 @@ export function FeaturedProducts() {
               {/* Content */}
               <div className="p-5">
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                  {product.roomType}
+                  {getRoomTypeLabel(language, product.roomType)}
                 </span>
                 <Link href={`/products/${product.slug}`}>
                   <h3 className="mt-1 font-medium text-foreground hover:text-accent transition-colors">
@@ -99,7 +101,7 @@ export function FeaturedProducts() {
                   </span>
                   {product.bulkPrice && (
                     <span className="text-sm text-muted-foreground">
-                      B2B: ${product.bulkPrice.toLocaleString()}
+                      {t('home.featured.b2b')}: ${product.bulkPrice.toLocaleString()}
                     </span>
                   )}
                 </div>

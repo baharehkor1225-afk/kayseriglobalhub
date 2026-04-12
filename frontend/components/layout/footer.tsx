@@ -1,34 +1,37 @@
+'use client'
+
 import Link from 'next/link'
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
+import { useLanguage } from '@/components/language-provider'
 
 const footerLinks = {
   shop: [
-    { name: 'Living Room', href: '/products?category=living-room' },
-    { name: 'Bedroom', href: '/products?category=bedroom' },
-    { name: 'Dining', href: '/products?category=dining' },
-    { name: 'Office', href: '/products?category=office' },
-    { name: 'New Arrivals', href: '/products?filter=new' },
+    { key: 'livingRoom', href: '/products?category=living-room' },
+    { key: 'bedroom', href: '/products?category=bedroom' },
+    { key: 'dining', href: '/products?category=dining' },
+    { key: 'office', href: '/products?category=office' },
+    { key: 'newArrivals', href: '/products?filter=new' },
   ],
   company: [
-    { name: 'About Us', href: '/about' },
-    { name: 'Our Story', href: '/about#story' },
-    { name: 'Craftsmanship', href: '/about#craftsmanship' },
-    { name: 'Sustainability', href: '/about#sustainability' },
-    { name: 'Careers', href: '/careers' },
+    { key: 'aboutUs', href: '/about' },
+    { key: 'ourStory', href: '/about#story' },
+    { key: 'craftsmanship', href: '/about#craftsmanship' },
+    { key: 'sustainability', href: '/about#sustainability' },
+    { key: 'careers', href: '/careers' },
   ],
   b2b: [
-    { name: 'Partnership Program', href: '/b2b' },
-    { name: 'Request Quote', href: '/b2b#inquiry-form' },
-    { name: 'Hotel & Hospitality', href: '/b2b#hospitality' },
-    { name: 'Corporate Projects', href: '/b2b#corporate' },
-    { name: 'Design Services', href: '/b2b#design' },
+    { key: 'partnershipProgram', href: '/b2b' },
+    { key: 'requestQuote', href: '/b2b#inquiry-form' },
+    { key: 'hotelHospitality', href: '/b2b#hospitality' },
+    { key: 'corporateProjects', href: '/b2b#corporate' },
+    { key: 'designServices', href: '/b2b#design' },
   ],
   support: [
-    { name: 'Contact Us', href: '/contact' },
-    { name: 'FAQs', href: '/faq' },
-    { name: 'Shipping & Delivery', href: '/shipping' },
-    { name: 'Returns', href: '/returns' },
-    { name: 'Warranty', href: '/warranty' },
+    { key: 'contactUs', href: '/contact' },
+    { key: 'faqs', href: '/faq' },
+    { key: 'shipping', href: '/shipping' },
+    { key: 'returns', href: '/returns' },
+    { key: 'warranty', href: '/warranty' },
   ],
 }
 
@@ -40,6 +43,8 @@ const socialLinks = [
 ]
 
 export function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* Newsletter Section */}
@@ -48,23 +53,23 @@ export function Footer() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="max-w-md">
               <h3 className="font-serif text-2xl font-medium">
-                Stay Inspired
+                {t('footer.stayInspired')}
               </h3>
               <p className="mt-2 text-primary-foreground/70">
-                Subscribe for exclusive offers, design tips, and new collection previews.
+                {t('footer.subscribeDesc')}
               </p>
             </div>
             <form className="flex gap-3 max-w-md w-full">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('footer.enterEmail')}
                 className="flex-1 px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-lg text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-primary-foreground/40"
               />
               <button
                 type="submit"
                 className="px-6 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent/90 transition-colors"
               >
-                Subscribe
+                {t('footer.subscribe')}
               </button>
             </form>
           </div>
@@ -87,8 +92,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="mt-4 text-sm text-primary-foreground/70 max-w-xs">
-              Premium Turkish furniture crafted with generations of expertise. 
-              Serving homes and businesses worldwide since 1985.
+              {t('footer.brandDesc')}
             </p>
             <div className="mt-6 space-y-3">
               <div className="flex items-center gap-3 text-sm text-primary-foreground/70">
@@ -112,15 +116,15 @@ export function Footer() {
 
           {/* Shop */}
           <div>
-            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">Shop</h4>
+            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">{t('footer.shop')}</h4>
             <ul className="space-y-3">
               {footerLinks.shop.map((link) => (
-                <li key={link.name}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
-                    {link.name}
+                    {t(`footer.links.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -129,15 +133,15 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">Company</h4>
+            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">{t('footer.company')}</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
-                <li key={link.name}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
-                    {link.name}
+                    {t(`footer.links.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -146,15 +150,15 @@ export function Footer() {
 
           {/* B2B */}
           <div>
-            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">B2B</h4>
+            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">{t('footer.b2b')}</h4>
             <ul className="space-y-3">
               {footerLinks.b2b.map((link) => (
-                <li key={link.name}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
-                    {link.name}
+                    {t(`footer.links.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -163,15 +167,15 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">Support</h4>
+            <h4 className="font-medium text-sm uppercase tracking-wider mb-4">{t('footer.support')}</h4>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
-                <li key={link.name}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
-                    {link.name}
+                    {t(`footer.links.${link.key}`)}
                   </Link>
                 </li>
               ))}
@@ -185,7 +189,7 @@ export function Footer() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <p className="text-sm text-primary-foreground/70">
-              &copy; {new Date().getFullYear()} Kayseri Global Hub. All rights reserved.
+              &copy; {new Date().getFullYear()} Kayseri Global Hub. {t('footer.allRightsReserved')}
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map((social) => (
@@ -201,10 +205,10 @@ export function Footer() {
             </div>
             <div className="flex items-center gap-6 text-sm text-primary-foreground/70">
               <Link href="/privacy" className="hover:text-primary-foreground transition-colors">
-                Privacy Policy
+                {t('footer.privacy')}
               </Link>
               <Link href="/terms" className="hover:text-primary-foreground transition-colors">
-                Terms of Service
+                {t('footer.terms')}
               </Link>
             </div>
           </div>

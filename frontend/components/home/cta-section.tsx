@@ -1,8 +1,11 @@
 import Link from 'next/link'
 import { ArrowRight, Building2, ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useLanguage } from '@/components/language-provider'
 
 export function CTASection() {
+  const { t } = useLanguage()
+
   return (
     <section className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -14,18 +17,17 @@ export function CTASection() {
                 <ShoppingBag className="h-7 w-7 text-accent" />
               </div>
               <h3 className="font-serif text-2xl md:text-3xl font-medium text-foreground">
-                Shop Our Collection
+                {t('home.cta.b2c.title')}
               </h3>
               <p className="mt-4 text-muted-foreground max-w-md">
-                Discover premium furniture for your home. Browse our curated 
-                collections and find pieces that reflect your style.
+                {t('home.cta.b2c.desc')}
               </p>
               <ul className="mt-6 space-y-3">
                 {[
-                  'Free shipping on orders over $500',
-                  '30-day hassle-free returns',
-                  'Expert design consultation',
-                  '10-year quality warranty',
+                  t('home.cta.b2c.feature1'),
+                  t('home.cta.b2c.feature2'),
+                  t('home.cta.b2c.feature3'),
+                  t('home.cta.b2c.feature4'),
                 ].map((feature) => (
                   <li
                     key={feature}
@@ -38,7 +40,7 @@ export function CTASection() {
               </ul>
               <Link href="/products" className="inline-block mt-8">
                 <Button className="bg-accent hover:bg-accent/90 text-accent-foreground h-12 px-6 group/btn">
-                  Browse Products
+                  {t('home.cta.b2c.action')}
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -54,18 +56,17 @@ export function CTASection() {
                 <Building2 className="h-7 w-7 text-primary-foreground" />
               </div>
               <h3 className="font-serif text-2xl md:text-3xl font-medium">
-                Partner With Us
+                {t('home.cta.b2b.title')}
               </h3>
               <p className="mt-4 text-primary-foreground/80 max-w-md">
-                Hotels, developers, and designers trust us for large-scale 
-                projects. Get competitive bulk pricing and dedicated support.
+                {t('home.cta.b2b.desc')}
               </p>
               <ul className="mt-6 space-y-3">
                 {[
-                  'Volume discounts up to 30%',
-                  'Custom design & manufacturing',
-                  'Dedicated project manager',
-                  'Global logistics support',
+                  t('home.cta.b2b.feature1'),
+                  t('home.cta.b2b.feature2'),
+                  t('home.cta.b2b.feature3'),
+                  t('home.cta.b2b.feature4'),
                 ].map((feature) => (
                   <li
                     key={feature}
@@ -78,7 +79,7 @@ export function CTASection() {
               </ul>
               <Link href="/b2b" className="inline-block mt-8">
                 <Button className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 h-12 px-6 group/btn">
-                  Request a Quote
+                  {t('home.cta.b2b.action')}
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </Link>

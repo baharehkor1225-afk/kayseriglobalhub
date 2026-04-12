@@ -5,10 +5,12 @@ import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { testimonials } from '@/lib/data'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
 
 export function TestimonialsSection() {
   const [activeTab, setActiveTab] = useState<'all' | 'b2b' | 'b2c'>('all')
   const [currentIndex, setCurrentIndex] = useState(0)
+  const { t } = useLanguage()
 
   const filteredTestimonials = testimonials.filter(
     t => activeTab === 'all' || t.type === activeTab
@@ -30,22 +32,21 @@ export function TestimonialsSection() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-sm uppercase tracking-widest text-accent">
-            Testimonials
+            {t('home.testimonials.badge')}
           </span>
           <h2 className="mt-4 font-serif text-3xl sm:text-4xl font-medium text-foreground">
-            What Our Clients Say
+            {t('home.testimonials.title')}
           </h2>
           <p className="mt-4 text-muted-foreground">
-            From luxury hotels to cozy homes, discover why clients worldwide 
-            trust Kayseri Global Hub for their furniture needs.
+            {t('home.testimonials.subtitle')}
           </p>
 
           {/* Tabs */}
           <div className="mt-8 inline-flex p-1 bg-background rounded-full">
             {[
-              { key: 'all', label: 'All' },
-              { key: 'b2b', label: 'B2B Partners' },
-              { key: 'b2c', label: 'Retail Customers' },
+              { key: 'all', label: t('home.testimonials.tab.all') },
+              { key: 'b2b', label: t('home.testimonials.tab.b2b') },
+              { key: 'b2c', label: t('home.testimonials.tab.b2c') },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -108,7 +109,7 @@ export function TestimonialsSection() {
               </div>
               <div className="flex items-center gap-1 px-3 py-1 bg-secondary rounded-full">
                 <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  {filteredTestimonials[currentIndex]?.type === 'b2b' ? 'B2B Partner' : 'Retail Customer'}
+                  {filteredTestimonials[currentIndex]?.type === 'b2b' ? t('home.testimonials.type.b2b') : t('home.testimonials.type.b2c')}
                 </span>
               </div>
             </div>

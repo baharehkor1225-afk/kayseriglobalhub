@@ -6,6 +6,7 @@ import { View, RotateCcw, Smartphone, Maximize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ARViewer } from '@/components/ARViewer'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
 
 const previewProducts = [
   {
@@ -31,6 +32,7 @@ const previewProducts = [
 export function ARPreviewSection() {
   const [activeProduct, setActiveProduct] = useState(previewProducts[0])
   const [is3DMode, setIs3DMode] = useState(false)
+  const { t } = useLanguage()
 
   return (
     <section className="py-24 bg-background">
@@ -39,24 +41,22 @@ export function ARPreviewSection() {
           {/* Content */}
           <div>
             <span className="text-sm uppercase tracking-widest text-accent">
-              Immersive Experience
+              {t('home.ar.badge')}
             </span>
             <h2 className="mt-4 font-serif text-3xl sm:text-4xl font-medium text-foreground text-balance">
-              Visualize Before You Buy
+              {t('home.ar.title')}
             </h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              Experience our furniture in stunning 3D detail. Rotate, zoom, and explore 
-              every angle before making your decision. Use AR mode to place 
-              furniture directly in your space using your smartphone.
+              {t('home.ar.subtitle')}
             </p>
 
             {/* Features */}
             <div className="mt-8 grid grid-cols-2 gap-6">
               {[
-                { icon: View, title: '360° View', desc: 'Explore every angle' },
-                { icon: RotateCcw, title: 'Interactive', desc: 'Rotate and zoom freely' },
-                { icon: Smartphone, title: 'AR Ready', desc: 'Place in your room' },
-                { icon: Maximize2, title: 'True Scale', desc: 'Realistic dimensions' },
+                { icon: View, title: t('home.ar.feature.viewTitle'), desc: t('home.ar.feature.viewDesc') },
+                { icon: RotateCcw, title: t('home.ar.feature.interactiveTitle'), desc: t('home.ar.feature.interactiveDesc') },
+                { icon: Smartphone, title: t('home.ar.feature.arTitle'), desc: t('home.ar.feature.arDesc') },
+                { icon: Maximize2, title: t('home.ar.feature.scaleTitle'), desc: t('home.ar.feature.scaleDesc') },
               ].map((feature) => (
                 <div key={feature.title} className="flex gap-3">
                   <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
@@ -72,7 +72,7 @@ export function ARPreviewSection() {
 
             {/* Product Selector */}
             <div className="mt-8">
-              <p className="text-sm font-medium mb-3">Select a product to preview:</p>
+              <p className="text-sm font-medium mb-3">{t('home.ar.selectProduct')}</p>
               <div className="flex gap-3">
                 {previewProducts.map((product) => (
                   <button
@@ -130,11 +130,11 @@ export function ARPreviewSection() {
                   className="gap-2"
                 >
                   <View className="h-4 w-4" />
-                  {is3DMode ? 'Exit 3D' : 'View in 3D'}
+                  {is3DMode ? t('home.ar.toggleOff') : t('home.ar.toggleOn')}
                 </Button>
                 {is3DMode && (
                   <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
-                    AR button appears when model loads
+                    {t('home.ar.arHint')}
                   </div>
                 )}
               </div>
@@ -145,8 +145,8 @@ export function ARPreviewSection() {
               <h3 className="font-medium text-lg">{activeProduct.name}</h3>
               <p className="text-sm text-muted-foreground">
                 {is3DMode 
-                  ? 'Use AR button to place in your room • Rotate and zoom with mouse/touch'
-                  : 'Click "View in 3D" for interactive preview'
+                  ? t('home.ar.mode3dHelp')
+                  : t('home.ar.modeImageHelp')
                 }
               </p>
             </div>

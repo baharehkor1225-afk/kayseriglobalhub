@@ -2,29 +2,35 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, ShoppingBag, Search, Building2, User } from 'lucide-react'
+import Image from 'next/image'
+import { Menu, X, ShoppingBag, Search, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/lib/cart-context'
 import { CartDrawer } from '@/components/cart/cart-drawer'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Products', href: '/products' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
-  { name: 'testsp', href: '/testsp' },
+  { key: 'home', href: '/' },
+  { key: 'products', href: '/products' },
+  { key: 'about', href: '/about' },
+  { key: 'contact', href: '/contact' },
+  { key: 'testsp', href: '/testsp' },
 ]
 
 const b2bLinks = [
-  { name: 'B2B Partnership', href: '/b2b' },
-  { name: 'Request Quote', href: '/b2b#inquiry-form' },
+  { key: 'b2bPartners', href: '/b2b' },
+  { key: 'getQuote', href: '/b2b#inquiry-form' },
 ]
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { totalItems, setIsOpen } = useCart()
+  const { language, toggleLanguage, t } = useLanguage()
+
+  const flagSrc = language === 'en' ? '/images/flags/en.svg' : '/images/flags/tr.svg'
+  const flagAlt = language === 'en' ? 'English' : 'Turkish'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,11 +68,11 @@ export function Header() {
             <div className="hidden lg:flex lg:items-center lg:gap-8">
               {navigation.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.key}
                   href={item.href}
                   className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
                 >
-                  {item.name}
+                  {t(`header.${item.key}`)}
                 </Link>
               ))}
               <div className="h-4 w-px bg-border" />
@@ -75,7 +81,7 @@ export function Header() {
                 className="flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
               >
                 <Building2 className="h-4 w-4" />
-                B2B Partners
+                {t('header.b2bPartners')}
               </Link>
             </div>
 
@@ -83,7 +89,7 @@ export function Header() {
             <div className="hidden lg:flex lg:items-center lg:gap-4">
               <Button variant="ghost" size="icon" className="relative">
                 <Search className="h-5 w-5" />
-                <span className="sr-only">Search</span>
+                <span className="sr-only">{t('header.search')}</span>
               </Button>
               <Button
                 variant="ghost"
@@ -97,17 +103,34 @@ export function Header() {
                     {totalItems}
                   </span>
                 )}
-                <span className="sr-only">Shopping cart</span>
+                <span className="sr-only">{t('header.shoppingCart')}</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-10 px-3 flex items-center gap-2"
+                onClick={toggleLanguage}
+              >
+                <Image src={flagSrc} alt={flagAlt} width={20} height={15} className="rounded-sm" />
+                <span className="text-xs font-semibold">{language.toUpperCase()}</span>
               </Button>
               <Link href="/b2b">
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Get a Quote
+                  {t('header.getQuote')}
                 </Button>
               </Link>
             </div>
 
             {/* Mobile menu button */}
-            <div className="flex items-center gap-4 lg:hidden">
+            <div className="flex items-center gap-2 lg:hidden">
+              <Button
+                variant="ghost"
+                className="h-9 px-2"
+                onClick={toggleLanguage}
+                aria-label={t('header.language')}
+              >
+                <Image src={flagSrc} alt={flagAlt} width={18} height={14} className="rounded-sm" />
+                <span className="ml-1 text-[11px] font-semibold">{language.toUpperCase()}</span>
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"
@@ -146,29 +169,29 @@ export function Header() {
           <div className="bg-background border-t border-border px-4 py-4 space-y-4">
             {navigation.map((item) => (
               <Link
-                key={item.name}
+                key={item.key}
                 href={item.href}
                 className="block py-2 text-base font-medium text-foreground hover:text-accent transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {item.name}
+                {t(`header.${item.key}`)}
               </Link>
             ))}
             <div className="h-px bg-border my-4" />
             {b2bLinks.map((item) => (
               <Link
-                key={item.name}
+                key={item.key}
                 href={item.href}
                 className="flex items-center gap-2 py-2 text-base font-medium text-accent hover:text-accent/80 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Building2 className="h-4 w-4" />
-                {item.name}
+                {t(`header.${item.key}`)}
               </Link>
             ))}
             <Link href="/b2b" onClick={() => setMobileMenuOpen(false)}>
               <Button className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground">
-                Get a Quote
+                {t('header.getQuote')}
               </Button>
             </Link>
           </div>

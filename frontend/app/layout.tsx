@@ -5,6 +5,7 @@ import './globals.css'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { CartProvider } from '@/lib/cart-context'
+import { LanguageProvider } from '@/components/language-provider'
 
 const playfair = Playfair_Display({ 
   subsets: ['latin'],
@@ -70,13 +71,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body className="font-sans antialiased">
-        <CartProvider>
-          <Header />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
-        </CartProvider>
+        <LanguageProvider>
+          <CartProvider>
+            <Header />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
+        </LanguageProvider>
         <Analytics />
       </body>
     </html>
