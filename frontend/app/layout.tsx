@@ -20,6 +20,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://kayseriglobalhub.com'),
   title: {
     default: 'Kayseri Global Hub | Premium Turkish Furniture',
     template: '%s | Kayseri Global Hub',
