@@ -16,7 +16,7 @@ const values = [
   },
   {
     icon: Users,
-    titleEn: 'Customerی Focus',
+    titleEn: 'Customer Focus',
     titleTr: 'Musteri Odakli',
     descriptionEn: 'Your satisfaction drives everything we do, from design to delivery and beyond.',
     descriptionTr: 'Tasarımdan teslime kadar attigimiz her adimin merkezinde memnuniyetiniz var.',
