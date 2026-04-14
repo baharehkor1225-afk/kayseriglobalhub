@@ -9,12 +9,12 @@
     "install-all": "cd frontend && npm install && cd ../backend && npm install"
   },
   "dependencies": {
-    "lucide-react": "0.564.0"
+    "lucide-react": "0.564.0",
+    "next": "16.2.0"
   },
   "devDependencies": {
     "@types/node": "25.6.0",
     "@types/react": "19.2.14",
-    "next": "16.2.0",
     "typescript": "6.0.2"
   }
 }
