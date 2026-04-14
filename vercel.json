@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "cd frontend && npm install --no-workspaces",
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/.next"
+  "framework": "nextjs",
+  "installCommand": "npm install --prefix frontend",
+  "buildCommand": "npm run build"
 }
