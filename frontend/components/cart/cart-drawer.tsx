@@ -59,7 +59,7 @@ export function CartDrawer() {
             <div className="flex-1 flex flex-col items-center justify-center p-6">
               <ShoppingBag className="h-16 w-16 text-muted-foreground/50 mb-4" />
               <p className="text-muted-foreground text-center mb-6">
-                Your cart is empty
+                Yourق cart is empty
               </p>
               <Link href="/products" onClick={() => setIsOpen(false)}>
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
