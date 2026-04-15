@@ -1,23 +1,10 @@
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { CartProvider } from '@/lib/cart-context'
 import { LanguageProvider } from '@/components/language-provider'
-
-const playfair = Playfair_Display({ 
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-})
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kayseriglobalhub.com'),
@@ -70,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="en">
       <body className="font-sans antialiased">
         <LanguageProvider>
           <CartProvider>
