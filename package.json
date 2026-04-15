@@ -1,13 +1,8 @@
 {
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
-    "vercel-build": "npm run build --workspace frontend",
     "start": "cd frontend && npm run start",
     "backend": "cd backend && npm run dev",
     "prisma": "cd backend && npm run prisma",
