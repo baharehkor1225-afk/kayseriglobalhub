@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@supabase/supabase-js'
 
 interface ProductFormData {
   name: string
@@ -24,6 +25,13 @@ interface ProductFormData {
   inStock: boolean
   isNew: boolean
   isBestSeller: boolean
+}
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 }
 
 const CATEGORIES = [
@@ -59,7 +67,11 @@ interface Props {
 export default function ProductForm({ initialData, mode }: Props) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+  const [uploadedImages, setUploadedImages] = useState<string[]>(
+    initialData?.images ? parseLines(initialData.images) : []
+  )
 
   const [form, setForm] = useState<ProductFormData>({
     name: initialData?.name ?? '',
@@ -94,6 +106,47 @@ export default function ProductForm({ initialData, mode }: Props) {
     })
   }
 
+  async function handleUploadImages(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files
+    if (!files) return
+
+    setUploading(true)
+    const supabase = getSupabase()
+    const newUrls: string[] = []
+
+    for (const file of files) {
+      const timestamp = Date.now()
+      const random = Math.random().toString(36).substr(2, 9)
+      const path = `products/${timestamp}-${random}-${file.name}`
+
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(path, file)
+
+      if (error) {
+        setError(`Upload failed: ${error.message}`)
+        setUploading(false)
+        return
+      }
+
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(path)
+
+      if (data?.publicUrl) {
+        newUrls.push(data.publicUrl)
+      }
+    }
+
+    setUploadedImages([...uploadedImages, ...newUrls])
+    e.target.value = ''
+    setUploading(false)
+  }
+
+  function removeImage(index: number) {
+    setUploadedImages(uploadedImages.filter((_, i) => i !== index))
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
@@ -108,8 +161,8 @@ export default function ProductForm({ initialData, mode }: Props) {
       price: parseFloat(form.price),
       bulkPrice: form.bulkPrice ? parseFloat(form.bulkPrice) : null,
       minBulkQuantity: form.minBulkQuantity ? parseInt(form.minBulkQuantity) : null,
-      imageUrl: form.imageUrl || null,
-      images: parseLines(form.images),
+      imageUrl: uploadedImages.length > 0 ? uploadedImages[0] : (form.imageUrl || null),
+      images: uploadedImages.length > 0 ? uploadedImages : parseLines(form.images),
       model3d: form.model3d || null,
       features: parseLines(form.features),
       dimensions: {
@@ -249,7 +302,54 @@ export default function ProductForm({ initialData, mode }: Props) {
       {/* Media */}
       <section className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
         <h2 className="font-semibold text-gray-800">Media & 3D</h2>
-        <Field label="Main Image URL">
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload Images
+          </label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleUploadImages}
+            disabled={uploading}
+            className="block w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-lg file:border-0
+              file:text-sm file:font-semibold
+              file:bg-green-50 file:text-green-700
+              hover:file:bg-green-100 disabled:opacity-50"
+          />
+          {uploading && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
+        </div>
+
+        {/* Image Preview */}
+        {uploadedImages.length > 0 && (
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-3">Uploaded Images</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {uploadedImages.map((url, idx) => (
+                <div key={idx} className="relative group">
+                  <img
+                    src={url}
+                    alt={`Product ${idx + 1}`}
+                    className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(idx)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Field label="Main Image URL (اگر فایل نآپلود کردی)">
           <input
             value={form.imageUrl}
             onChange={e => set('imageUrl', e.target.value)}
@@ -257,7 +357,8 @@ export default function ProductForm({ initialData, mode }: Props) {
             placeholder="/images/products/sofa.jpg"
           />
         </Field>
-        <Field label="Image URLs (one per line)">
+
+        <Field label="Additional Image URLs (one per line)">
           <textarea
             rows={3}
             value={form.images}
@@ -266,6 +367,7 @@ export default function ProductForm({ initialData, mode }: Props) {
             placeholder="/images/products/sofa-1.jpg&#10;/images/products/sofa-2.jpg"
           />
         </Field>
+
         <Field label="3D Model URL (.glb)">
           <input
             value={form.model3d}
