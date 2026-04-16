@@ -50,21 +50,6 @@ export function ARViewer({
     const canvas = document.createElement('canvas')
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
     setIsSupported(!!gl)
-
-    // Check if the model file exists
-    if (src) {
-      fetch(src, { method: 'HEAD' })
-        .then(response => {
-          if (!response.ok) {
-            setError('3D model file not found. Please contact support.')
-            setIsLoading(false)
-          }
-        })
-        .catch(() => {
-          setError('3D model file not found. Please contact support.')
-          setIsLoading(false)
-        })
-    }
   }, [src])
 
   const handleLoad = () => {
