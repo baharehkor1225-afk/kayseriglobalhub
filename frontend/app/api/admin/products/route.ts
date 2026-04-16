@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { randomUUID } from 'crypto'
 
 function adminClient() {
   return createClient(
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabase
     .from('Product')
-    .insert({ ...body, slug })
+    .insert({ id: randomUUID(), ...body, slug })
     .select()
     .single()
 

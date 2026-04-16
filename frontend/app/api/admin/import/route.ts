@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { randomUUID } from 'crypto'
 
 function adminClient() {
   return createClient(
@@ -179,7 +180,7 @@ export async function POST() {
   for (const product of defaultProducts) {
     const { error } = await supabase
       .from('Product')
-      .upsert(product, { onConflict: 'slug' })
+      .upsert({ id: randomUUID(), ...product }, { onConflict: 'slug' })
 
     if (error) {
       results.errors.push(`${product.slug}: ${error.message}`)
