@@ -19,14 +19,15 @@ export function ProductGallery({ product }: ProductGalleryProps) {
   const [isZoomed, setIsZoomed] = useState(false)
   const [active3DIndex, setActive3DIndex] = useState(0)
 
-  // Support both model3ds (array) and legacy model3d (string)
-  const models: string[] = (
-    (product as any).model3ds?.length
-      ? (product as any).model3ds
-      : product.model3d
-      ? [product.model3d]
-      : []
-  ).filter(Boolean)
+  // Support model3ds as array/string and legacy model3d.
+  const rawModels = (product as any).model3ds
+  const models: string[] = Array.isArray(rawModels)
+    ? rawModels.filter((m): m is string => typeof m === 'string' && m.trim().length > 0)
+    : typeof rawModels === 'string' && rawModels.trim().length > 0
+    ? rawModels.split(/\n|,/).map(m => m.trim()).filter(Boolean)
+    : product.model3d
+    ? [product.model3d]
+    : []
 
   return (
     <div className="space-y-6">
@@ -85,26 +86,6 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               shadowIntensity={1}
               exposure={1}
             />
-            {/* Multi-model selector */}
-            {models.length > 1 && (
-              <div className="absolute bottom-20 left-4 right-4 flex gap-2 justify-center">
-                {models.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActive3DIndex(idx)}
-                    className={cn(
-                      'px-3 py-1.5 rounded-full text-xs font-semibold transition-all',
-                      active3DIndex === idx
-                        ? 'bg-accent text-white'
-                        : 'bg-background/80 text-foreground hover:bg-accent/20'
-                    )}
-                  >
-                    <Box className="inline h-3 w-3 mr-1" />
-                    Model {idx + 1}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         )}
 
@@ -140,8 +121,29 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         </div>
       </div>
 
+      {/* 3D Model Selector */}
+      {is3DMode && models.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {models.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActive3DIndex(idx)}
+              className={cn(
+                'shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all',
+                active3DIndex === idx
+                  ? 'bg-accent text-white'
+                  : 'bg-secondary text-foreground hover:bg-accent/20'
+              )}
+            >
+              <Box className="inline h-3 w-3 mr-1" />
+              Model {idx + 1}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Thumbnail Navigation */}
-      {product.images.length > 1 && (
+      {(product.images.length > 1 || models.length > 0) && (
         <div className="flex gap-3 overflow-x-auto pb-2">
           {product.images.map((image, index) => (
             <button
@@ -167,20 +169,24 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           ))}
           {/* 3D Thumbnail */}
           <button
-            onClick={() => setIs3DMode(true)}
+            onClick={() => {
+              setIs3DMode(true)
+              setActive3DIndex(0)
+            }}
             className={cn(
               'relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-all bg-muted flex items-center justify-center',
               is3DMode
                 ? 'border-accent ring-2 ring-accent/20'
                 : 'border-border hover:border-muted-foreground'
             )}
+            disabled={models.length === 0}
           >
-          <View className="h-6 w-6 text-muted-foreground" />
-          {models.length > 1 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white rounded-full text-xs flex items-center justify-center font-bold">
-              {models.length}
-            </span>
-          )}
+            <View className="h-6 w-6 text-muted-foreground" />
+            {models.length > 1 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white rounded-full text-xs flex items-center justify-center font-bold">
+                {models.length}
+              </span>
+            )}
           </button>
         </div>
       )}
