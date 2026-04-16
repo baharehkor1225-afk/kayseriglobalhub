@@ -4,15 +4,49 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, ShoppingBag, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { products } from '@/lib/data'
+import { products as staticProducts } from '@/lib/data'
 import { useCart } from '@/lib/cart-context'
 import { useLanguage } from '@/components/language-provider'
 import { getRoomTypeLabel } from '@/lib/i18n'
+import { useState, useEffect } from 'react'
+import type { Product } from '@/lib/data'
+import { createClient } from '@supabase/supabase-js'
 
 export function FeaturedProducts() {
   const { addItem } = useCart()
   const { language, t } = useLanguage()
-  const featuredProducts = products.filter(p => p.isBestSeller || p.isNew).slice(0, 4)
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>(
+    staticProducts.filter(p => p.isBestSeller || p.isNew).slice(0, 4)
+  )
+
+  useEffect(() => {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    supabase
+      .from('Product')
+      .select('*')
+      .order('createdAt', { ascending: false })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const mapped = data.map((p: any) => ({
+            ...p,
+            price: Number(p.price),
+            bulkPrice: p.bulkPrice ? Number(p.bulkPrice) : undefined,
+            images: Array.isArray(p.images) ? p.images : [],
+            features: Array.isArray(p.features) ? p.features : [],
+            materials: Array.isArray(p.materials) ? p.materials : [],
+            colors: Array.isArray(p.colors) ? p.colors : [],
+            dimensions: p.dimensions ?? { width: 0, height: 0, depth: 0 },
+            roomType: p.roomType ?? '',
+            description: p.description ?? '',
+          }))
+          const featured = mapped.filter((p: Product) => p.isBestSeller || p.isNew)
+          setFeaturedProducts((featured.length > 0 ? featured : mapped).slice(0, 4))
+        }
+      })
+  }, [])
 
   return (
     <section className="py-24 bg-secondary">

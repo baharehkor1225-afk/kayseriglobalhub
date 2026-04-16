@@ -1,9 +1,38 @@
 import type { Metadata } from 'next'
+import { createClient } from '@supabase/supabase-js'
 import { ProductsGrid } from '@/components/products/products-grid'
 import { ProductsHeader } from '@/components/products/products-header'
 import { ProductsFilters } from '@/components/products/products-filters'
-import { products as allProducts } from '@/lib/data'
+import { products as staticProducts } from '@/lib/data'
 import type { Product } from '@/lib/data'
+
+async function getProducts(): Promise<Product[]> {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const { data, error } = await supabase
+      .from('Product')
+      .select('*')
+      .order('createdAt', { ascending: false })
+    if (error || !data || data.length === 0) return staticProducts
+    return data.map((p: any) => ({
+      ...p,
+      price: Number(p.price),
+      bulkPrice: p.bulkPrice ? Number(p.bulkPrice) : undefined,
+      images: Array.isArray(p.images) ? p.images : [],
+      features: Array.isArray(p.features) ? p.features : [],
+      materials: Array.isArray(p.materials) ? p.materials : [],
+      colors: Array.isArray(p.colors) ? p.colors : [],
+      dimensions: p.dimensions ?? { width: 0, height: 0, depth: 0 },
+      roomType: p.roomType ?? '',
+      description: p.description ?? '',
+    }))
+  } catch {
+    return staticProducts
+  }
+}
 
 export const metadata: Metadata = {
   title: 'Shop Premium Furniture',
@@ -29,6 +58,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams
+  const allProducts = await getProducts()
 
   // Filter products based on search params
   let filteredProducts = [...allProducts]

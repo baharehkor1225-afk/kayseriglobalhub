@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { roomSets, products } from '@/lib/data'
+import { createClient } from '@supabase/supabase-js'
+import { roomSets, products as staticProducts } from '@/lib/data'
+import type { Product } from '@/lib/data'
 import { ProductGallery } from '@/components/products/product-gallery'
 import { ProductInfo } from '@/components/products/product-info'
 import { ProductTabs } from '@/components/products/product-tabs'
@@ -13,9 +15,59 @@ interface ProductPageProps {
 
 export const dynamic = 'force-dynamic'
 
+async function getProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const { data } = await supabase.from('Product').select('*').eq('slug', slug).single()
+    if (!data) return staticProducts.find(p => p.slug === slug) ?? null
+    return {
+      ...data,
+      price: Number(data.price),
+      bulkPrice: data.bulkPrice ? Number(data.bulkPrice) : undefined,
+      images: Array.isArray(data.images) ? data.images : [],
+      features: Array.isArray(data.features) ? data.features : [],
+      materials: Array.isArray(data.materials) ? data.materials : [],
+      colors: Array.isArray(data.colors) ? data.colors : [],
+      dimensions: data.dimensions ?? { width: 0, height: 0, depth: 0 },
+      roomType: data.roomType ?? '',
+      description: data.description ?? '',
+    }
+  } catch {
+    return staticProducts.find(p => p.slug === slug) ?? null
+  }
+}
+
+async function getAllProducts(): Promise<Product[]> {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const { data } = await supabase.from('Product').select('*')
+    if (!data || data.length === 0) return staticProducts
+    return data.map((p: any) => ({
+      ...p,
+      price: Number(p.price),
+      bulkPrice: p.bulkPrice ? Number(p.bulkPrice) : undefined,
+      images: Array.isArray(p.images) ? p.images : [],
+      features: Array.isArray(p.features) ? p.features : [],
+      materials: Array.isArray(p.materials) ? p.materials : [],
+      colors: Array.isArray(p.colors) ? p.colors : [],
+      dimensions: p.dimensions ?? { width: 0, height: 0, depth: 0 },
+      roomType: p.roomType ?? '',
+      description: p.description ?? '',
+    }))
+  } catch {
+    return staticProducts
+  }
+}
+
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  const product = products.find(p => p.slug === slug)
+  const product = await getProductBySlug(slug)
 
   if (!product) {
     return { title: 'Product Not Found' }
@@ -39,17 +91,19 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  const product = products.find(p => p.slug === slug)
+  const product = await getProductBySlug(slug)
 
   if (!product) {
     notFound()
   }
 
+  const allProducts = await getAllProducts()
+
   const productRoomSets = roomSets.filter((set) =>
     set.products.includes(product.id)
   )
 
-  const relatedProducts = products.filter(
+  const relatedProducts = allProducts.filter(
     (p) => p.category === product.category && p.id !== product.id
   )
 
