@@ -68,9 +68,13 @@ export default function ProductForm({ initialData, mode }: Props) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [uploadingModel, setUploadingModel] = useState(false)
   const [error, setError] = useState('')
   const [uploadedImages, setUploadedImages] = useState<string[]>(
     initialData?.images ? parseLines(initialData.images) : []
+  )
+  const [uploadedModel, setUploadedModel] = useState<string>(
+    initialData?.model3d ?? ''
   )
 
   const [form, setForm] = useState<ProductFormData>({
@@ -147,6 +151,38 @@ export default function ProductForm({ initialData, mode }: Props) {
     setUploadedImages(uploadedImages.filter((_, i) => i !== index))
   }
 
+  async function handleUploadModel(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingModel(true)
+    const supabase = getSupabase()
+    const timestamp = Date.now()
+    const random = Math.random().toString(36).substr(2, 9)
+    const path = `models/${timestamp}-${random}-${file.name}`
+
+    const { error } = await supabase.storage
+      .from('product-images')
+      .upload(path, file)
+
+    if (error) {
+      setError(`3D upload failed: ${error.message}`)
+      setUploadingModel(false)
+      return
+    }
+
+    const { data } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(path)
+
+    if (data?.publicUrl) {
+      setUploadedModel(data.publicUrl)
+      set('model3d', data.publicUrl)
+    }
+    e.target.value = ''
+    setUploadingModel(false)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
@@ -163,7 +199,7 @@ export default function ProductForm({ initialData, mode }: Props) {
       minBulkQuantity: form.minBulkQuantity ? parseInt(form.minBulkQuantity) : null,
       imageUrl: uploadedImages.length > 0 ? uploadedImages[0] : (form.imageUrl || null),
       images: uploadedImages.length > 0 ? uploadedImages : parseLines(form.images),
-      model3d: form.model3d || null,
+      model3d: uploadedModel || form.model3d || null,
       features: parseLines(form.features),
       dimensions: {
         width: parseFloat(form.width) || 0,
@@ -368,7 +404,41 @@ export default function ProductForm({ initialData, mode }: Props) {
           />
         </Field>
 
-        <Field label="3D Model URL (.glb)">
+        {/* 3D Model Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload 3D Model (.glb)
+          </label>
+          <input
+            type="file"
+            accept=".glb,.gltf"
+            onChange={handleUploadModel}
+            disabled={uploadingModel}
+            className="block w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-lg file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              hover:file:bg-blue-100 disabled:opacity-50"
+          />
+          {uploadingModel && <p className="text-sm text-gray-500 mt-2">Uploading 3D model...</p>}
+          {uploadedModel && (
+            <div className="mt-2 flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+              <span className="text-2xl">📦</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-blue-800">3D Model Uploaded</p>
+                <p className="text-xs text-blue-600 truncate">{uploadedModel}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setUploadedModel(''); set('model3d', '') }}
+                className="text-xs text-red-600 hover:underline"
+              >Remove</button>
+            </div>
+          )}
+        </div>
+
+        <Field label="3D Model URL (اگر فایل آپلود نکردی)">
           <input
             value={form.model3d}
             onChange={e => set('model3d', e.target.value)}
