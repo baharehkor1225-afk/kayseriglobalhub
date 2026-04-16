@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronRight, View, RotateCcw, Smartphone, ZoomIn } from 'lucide-react'
+import { ChevronRight, View, Smartphone, ZoomIn, Box } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ARViewer } from '@/components/ARViewer'
 import type { Product } from '@/lib/data'
@@ -17,6 +17,16 @@ export function ProductGallery({ product }: ProductGalleryProps) {
   const [activeImage, setActiveImage] = useState(0)
   const [is3DMode, setIs3DMode] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
+  const [active3DIndex, setActive3DIndex] = useState(0)
+
+  // Support both model3ds (array) and legacy model3d (string)
+  const models: string[] = (
+    (product as any).model3ds?.length
+      ? (product as any).model3ds
+      : product.model3d
+      ? [product.model3d]
+      : []
+  ).filter(Boolean)
 
   return (
     <div className="space-y-6">
@@ -65,15 +75,37 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             </div>
           </>
         ) : (
-          <ARViewer
-            src={product.model3d || '/models/placeholder.glb'}
-            alt={product.name}
-            className="w-full h-full"
-            autoRotate={true}
-            cameraControls={true}
-            shadowIntensity={1}
-            exposure={1}
-          />
+          <div className="w-full h-full flex flex-col">
+            <ARViewer
+              src={models[active3DIndex] || '/models/placeholder.glb'}
+              alt={`${product.name} - Model ${active3DIndex + 1}`}
+              className="w-full flex-1"
+              autoRotate={true}
+              cameraControls={true}
+              shadowIntensity={1}
+              exposure={1}
+            />
+            {/* Multi-model selector */}
+            {models.length > 1 && (
+              <div className="absolute bottom-20 left-4 right-4 flex gap-2 justify-center">
+                {models.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActive3DIndex(idx)}
+                    className={cn(
+                      'px-3 py-1.5 rounded-full text-xs font-semibold transition-all',
+                      active3DIndex === idx
+                        ? 'bg-accent text-white'
+                        : 'bg-background/80 text-foreground hover:bg-accent/20'
+                    )}
+                  >
+                    <Box className="inline h-3 w-3 mr-1" />
+                    Model {idx + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {/* Badges */}
@@ -143,7 +175,12 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                 : 'border-border hover:border-muted-foreground'
             )}
           >
-            <View className="h-6 w-6 text-muted-foreground" />
+          <View className="h-6 w-6 text-muted-foreground" />
+          {models.length > 1 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white rounded-full text-xs flex items-center justify-center font-bold">
+              {models.length}
+            </span>
+          )}
           </button>
         </div>
       )}

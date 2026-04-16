@@ -10,7 +10,8 @@ export interface Product {
   bulkPrice?: number;
   minBulkQuantity?: number;
   images: string[];
-  model3d?: string; // GLB file path placeholder
+  model3d?: string; // legacy single model
+  model3ds?: string[]; // multiple 3D models
   features: string[];
   dimensions: {
     width: number;

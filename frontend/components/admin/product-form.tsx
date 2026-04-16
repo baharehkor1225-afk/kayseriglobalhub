@@ -15,7 +15,7 @@ interface ProductFormData {
   minBulkQuantity: string
   imageUrl: string
   images: string
-  model3d: string
+  model3ds: string
   features: string
   width: string
   height: string
@@ -73,8 +73,8 @@ export default function ProductForm({ initialData, mode }: Props) {
   const [uploadedImages, setUploadedImages] = useState<string[]>(
     initialData?.images ? parseLines(initialData.images) : []
   )
-  const [uploadedModel, setUploadedModel] = useState<string>(
-    initialData?.model3d ?? ''
+  const [uploadedModels, setUploadedModels] = useState<string[]>(
+    initialData?.model3ds ? parseLines(initialData.model3ds) : []
   )
 
   const [form, setForm] = useState<ProductFormData>({
@@ -88,7 +88,7 @@ export default function ProductForm({ initialData, mode }: Props) {
     minBulkQuantity: initialData?.minBulkQuantity ?? '',
     imageUrl: initialData?.imageUrl ?? '',
     images: initialData?.images ?? '',
-    model3d: initialData?.model3d ?? '',
+    model3ds: initialData?.model3ds ?? '',
     features: initialData?.features ?? '',
     width: initialData?.width ?? '',
     height: initialData?.height ?? '',
@@ -152,35 +152,47 @@ export default function ProductForm({ initialData, mode }: Props) {
   }
 
   async function handleUploadModel(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = e.target.files
+    if (!files) return
 
     setUploadingModel(true)
     const supabase = getSupabase()
-    const timestamp = Date.now()
-    const random = Math.random().toString(36).substr(2, 9)
-    const path = `models/${timestamp}-${random}-${file.name}`
+    const newUrls: string[] = [...uploadedModels]
 
-    const { error } = await supabase.storage
-      .from('product-images')
-      .upload(path, file)
+    for (const file of files) {
+      const timestamp = Date.now()
+      const random = Math.random().toString(36).substr(2, 9)
+      const path = `models/${timestamp}-${random}-${file.name}`
 
-    if (error) {
-      setError(`3D upload failed: ${error.message}`)
-      setUploadingModel(false)
-      return
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(path, file)
+
+      if (error) {
+        setError(`3D upload failed: ${error.message}`)
+        setUploadingModel(false)
+        return
+      }
+
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(path)
+
+      if (data?.publicUrl) {
+        newUrls.push(data.publicUrl)
+      }
     }
 
-    const { data } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(path)
-
-    if (data?.publicUrl) {
-      setUploadedModel(data.publicUrl)
-      set('model3d', data.publicUrl)
-    }
+    setUploadedModels(newUrls)
+    set('model3ds', newUrls.join('\n'))
     e.target.value = ''
     setUploadingModel(false)
+  }
+
+  function removeModel(index: number) {
+    const updated = uploadedModels.filter((_, i) => i !== index)
+    setUploadedModels(updated)
+    set('model3ds', updated.join('\n'))
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -199,7 +211,7 @@ export default function ProductForm({ initialData, mode }: Props) {
       minBulkQuantity: form.minBulkQuantity ? parseInt(form.minBulkQuantity) : null,
       imageUrl: uploadedImages.length > 0 ? uploadedImages[0] : (form.imageUrl || null),
       images: uploadedImages.length > 0 ? uploadedImages : parseLines(form.images),
-      model3d: uploadedModel || form.model3d || null,
+      model3ds: uploadedModels.length > 0 ? uploadedModels : parseLines(form.model3ds),
       features: parseLines(form.features),
       dimensions: {
         width: parseFloat(form.width) || 0,
@@ -404,13 +416,14 @@ export default function ProductForm({ initialData, mode }: Props) {
           />
         </Field>
 
-        {/* 3D Model Upload */}
+        {/* 3D Models Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Upload 3D Model (.glb)
+            Upload 3D Models (.glb / .gltf) - چند فایل انتخاب کن
           </label>
           <input
             type="file"
+            multiple
             accept=".glb,.gltf"
             onChange={handleUploadModel}
             disabled={uploadingModel}
@@ -421,31 +434,52 @@ export default function ProductForm({ initialData, mode }: Props) {
               file:bg-blue-50 file:text-blue-700
               hover:file:bg-blue-100 disabled:opacity-50"
           />
-          {uploadingModel && <p className="text-sm text-gray-500 mt-2">Uploading 3D model...</p>}
-          {uploadedModel && (
-            <div className="mt-2 flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <span className="text-2xl">📦</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-blue-800">3D Model Uploaded</p>
-                <p className="text-xs text-blue-600 truncate">{uploadedModel}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => { setUploadedModel(''); set('model3d', '') }}
-                className="text-xs text-red-600 hover:underline"
-              >Remove</button>
-            </div>
-          )}
+          {uploadingModel && <p className="text-sm text-gray-500 mt-2">Uploading 3D models...</p>}
         </div>
 
-        <Field label="3D Model URL (اگر فایل آپلود نکردی)">
-          <input
-            value={form.model3d}
-            onChange={e => set('model3d', e.target.value)}
+        {/* 3D Models Preview */}
+        {uploadedModels.length > 0 && (
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-3">Uploaded 3D Models</p>
+            <div className="space-y-2">
+              {uploadedModels.map((url, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                  <span className="text-xl">📦</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-blue-800">Model {idx + 1}</p>
+                    <p className="text-xs text-blue-600 truncate">{url}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeModel(idx)}
+                    className="text-xs text-red-600 hover:underline">Remove</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Field label="3D Model URLs (اگر فایل آپلود نکردی)">
+          <textarea
+            rows={3}
+            value={form.model3ds}
+            onChange={e => set('model3ds', e.target.value)}
             className={inputClass}
-            placeholder="/models/sofa.glb"
+            placeholder="/models/sofa-1.glb&#10;/models/sofa-2.glb"
           />
         </Field>
+
+        {/* Old single model field - keep for backwards compatibility */}
+        {false && (
+          <Field label="3D Model URL (.glb)">
+            <input
+              value={form.model3ds}
+              onChange={e => set('model3ds', e.target.value)}
+              className={inputClass}
+              placeholder="/models/sofa.glb"
+            />
+          </Field>
+        )}
       </section>
 
       {/* Details */}
