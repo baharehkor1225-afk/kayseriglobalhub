@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronRight, View, Smartphone, ZoomIn, Box } from 'lucide-react'
+import { ChevronRight, View, Smartphone, ZoomIn } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ARViewer } from '@/components/ARViewer'
 import type { Product } from '@/lib/data'
@@ -17,7 +17,6 @@ export function ProductGallery({ product }: ProductGalleryProps) {
   const [activeImage, setActiveImage] = useState(0)
   const [is3DMode, setIs3DMode] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
-  const [active3DIndex, setActive3DIndex] = useState(0)
 
   // Support model3ds as array/string and legacy model3d.
   const rawModels = (product as any).model3ds
@@ -78,8 +77,9 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         ) : (
           <div className="w-full h-full flex flex-col">
             <ARViewer
-              src={models[active3DIndex] || '/models/placeholder.glb'}
-              alt={`${product.name} - Model ${active3DIndex + 1}`}
+              src={models[0] || '/models/placeholder.glb'}
+              sources={models}
+              alt={`${product.name} - 3D Model`}
               className="w-full flex-1"
               autoRotate={true}
               cameraControls={true}
@@ -121,27 +121,6 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         </div>
       </div>
 
-      {/* 3D Model Selector */}
-      {is3DMode && models.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {models.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActive3DIndex(idx)}
-              className={cn(
-                'shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all',
-                active3DIndex === idx
-                  ? 'bg-accent text-white'
-                  : 'bg-secondary text-foreground hover:bg-accent/20'
-              )}
-            >
-              <Box className="inline h-3 w-3 mr-1" />
-              Model {idx + 1}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Thumbnail Navigation */}
       {(product.images.length > 1 || models.length > 0) && (
         <div className="flex gap-3 overflow-x-auto pb-2">
@@ -171,7 +150,6 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           <button
             onClick={() => {
               setIs3DMode(true)
-              setActive3DIndex(0)
             }}
             className={cn(
               'relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-all bg-muted flex items-center justify-center',

@@ -21,6 +21,7 @@ const ModelViewer = dynamic(() => import('./ModelViewerWrapper'), {
 
 interface ARViewerProps {
   src: string
+  sources?: string[]
   alt?: string
   className?: string
   autoRotate?: boolean
@@ -32,6 +33,7 @@ interface ARViewerProps {
 
 export function ARViewer({
   src,
+  sources,
   alt = '3D Model',
   className,
   autoRotate = true,
@@ -62,7 +64,12 @@ export function ARViewer({
     console.error('Model viewer error:', event)
   }
 
-  if (!src) {
+  const normalizedSources = Array.isArray(sources)
+    ? sources.filter((source): source is string => typeof source === 'string' && source.trim().length > 0)
+    : []
+  const hasSource = Boolean(src) || normalizedSources.length > 0
+
+  if (!hasSource) {
     return (
       <div className={cn('w-full h-full flex items-center justify-center bg-secondary rounded-lg', className)}>
         <div className="text-center p-6">
@@ -102,6 +109,7 @@ export function ARViewer({
       }>
         <ModelViewer
           src={src}
+          sources={normalizedSources}
           alt={alt}
           autoRotate={autoRotate}
           cameraControls={cameraControls}

@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Smartphone, Loader2 } from 'lucide-react'
+import { mergeGlbModels } from '@/lib/merge-glb-models'
 
 interface ModelViewerWrapperProps {
   src: string
+  sources?: string[]
   alt: string
   autoRotate: boolean
   cameraControls: boolean
@@ -17,6 +19,7 @@ interface ModelViewerWrapperProps {
 
 export default function ModelViewerWrapper({
   src,
+  sources,
   alt,
   autoRotate,
   cameraControls,
@@ -29,6 +32,59 @@ export default function ModelViewerWrapper({
   const viewerRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [iosSrc, setIosSrc] = useState<string | undefined>(undefined)
+  const [resolvedSrc, setResolvedSrc] = useState<string>(src)
+  const [generatedBlobUrl, setGeneratedBlobUrl] = useState<string | undefined>(undefined)
+
+  const normalizedSources = useMemo(
+    () => (Array.isArray(sources)
+      ? sources.filter((source): source is string => typeof source === 'string' && source.trim().length > 0)
+      : []),
+    [sources]
+  )
+  const sourcesSignature = normalizedSources.join('|')
+
+  useEffect(() => {
+    let cancelled = false
+
+    const createMergedSource = async () => {
+      if (normalizedSources.length <= 1) {
+        setResolvedSrc(normalizedSources[0] || src)
+        return
+      }
+
+      try {
+        const mergedUrl = await mergeGlbModels(normalizedSources)
+        if (cancelled) {
+          URL.revokeObjectURL(mergedUrl)
+          return
+        }
+
+        setGeneratedBlobUrl((previousUrl) => {
+          if (previousUrl) URL.revokeObjectURL(previousUrl)
+          return mergedUrl
+        })
+        setResolvedSrc(mergedUrl)
+      } catch (error) {
+        console.error('Failed to merge 3D models for AR:', error)
+        onError(error)
+        setResolvedSrc(normalizedSources[0] || src)
+      }
+    }
+
+    createMergedSource()
+
+    return () => {
+      cancelled = true
+    }
+  }, [onError, src, sourcesSignature])
+
+  useEffect(() => {
+    return () => {
+      if (generatedBlobUrl) {
+        URL.revokeObjectURL(generatedBlobUrl)
+      }
+    }
+  }, [generatedBlobUrl])
 
   useEffect(() => {
     let cleanup = () => { }
@@ -58,23 +114,29 @@ export default function ModelViewerWrapper({
 
   useEffect(() => {
     const tryLoadUsd = async () => {
-      if (!src.toLowerCase().endsWith('.glb')) {
+      // Don't attempt USDZ lookup for blob URLs or non-glb sources
+      if (!resolvedSrc || resolvedSrc.startsWith('blob:') || !resolvedSrc.toLowerCase().endsWith('.glb')) {
         setIosSrc(undefined)
         return
       }
 
-      const usdzUrl = src.replace(/\.glb$/i, '.usdz')
+      const usdzUrl = resolvedSrc.replace(/\.glb$/i, '.usdz')
 
       try {
         const response = await fetch(usdzUrl, { method: 'HEAD' })
-        setIosSrc(response.ok ? usdzUrl : undefined)
-      } catch {
+        if (response.ok) {
+          setIosSrc(usdzUrl)
+        } else {
+          setIosSrc(undefined)
+        }
+      } catch (error) {
+        console.debug('USDZ file not available, using GLB for iOS AR:', error)
         setIosSrc(undefined)
       }
     }
 
     tryLoadUsd()
-  }, [src])
+  }, [resolvedSrc])
 
   const handleARClick = () => {
     if (viewerRef.current) {
@@ -94,7 +156,7 @@ export default function ModelViewerWrapper({
       {/* @ts-ignore */}
       <model-viewer
         ref={viewerRef}
-        src={src}
+        src={resolvedSrc}
         alt={alt}
         ar
         ar-modes="webxr scene-viewer quick-look"
