@@ -10,8 +10,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "three": "^0.160.0",
     "@hookform/resolvers": "^3.9.1",
-    "@radix-ui/react-accordion": "1.2.12",
+      "three": "0.182.0",
     "@radix-ui/react-alert-dialog": "1.1.15",
     "@radix-ui/react-aspect-ratio": "1.1.8",
     "@radix-ui/react-avatar": "1.1.11",

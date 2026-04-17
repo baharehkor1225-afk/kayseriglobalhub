@@ -56,6 +56,11 @@ export async function mergeGlbModels(modelUrls: string[]): Promise<string> {
     throw new Error('No models provided for merge.')
   }
 
+  // Safety check: if only one model, no need to merge
+  if (modelUrls.length === 1) {
+    return resolveModelUrl(modelUrls[0])
+  }
+
   let Scene: any, Box3: any, Vector3: any, GLTFLoader: any, GLTFExporter: any
 
   try {
@@ -69,6 +74,7 @@ export async function mergeGlbModels(modelUrls: string[]): Promise<string> {
     ;({ GLTFExporter } = threeImports[2])
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
+    console.error('Failed to load Three.js modules:', message)
     throw new Error(`Failed to load Three.js modules for model merging: ${message}`)
   }
 
@@ -78,12 +84,14 @@ export async function mergeGlbModels(modelUrls: string[]): Promise<string> {
 
   let xOffset = 0
   const spacing = 0.35
+  let successfullyLoadedCount = 0
 
   for (let i = 0; i < modelUrls.length; i++) {
     const url = modelUrls[i]
     try {
       const gltf = await loadGltfModel(loader, url)
       const clonedScene = gltf.scene.clone(true)
+      successfullyLoadedCount++
 
     const bounds = new Box3().setFromObject(clonedScene)
     const size = new Vector3()
@@ -104,13 +112,17 @@ export async function mergeGlbModels(modelUrls: string[]): Promise<string> {
 
       mergedScene.add(clonedScene)
     } catch (modelError) {
-      console.warn(`Skipping model ${i + 1} (${url}):`, modelError instanceof Error ? modelError.message : String(modelError))
+      console.warn(`⚠️ Skipping model ${i + 1} (${url}):`, modelError instanceof Error ? modelError.message : String(modelError))
       // Continue with remaining models instead of failing completely
     }
   }
 
-  if (mergedScene.children.length === 0) {
+  if (successfullyLoadedCount === 0) {
     throw new Error('No models could be successfully loaded. Check URLs and CORS settings.')
+  }
+
+  if (successfullyLoadedCount < modelUrls.length) {
+    console.warn(`⚠️ Only ${successfullyLoadedCount} out of ${modelUrls.length} models loaded successfully.`)
   }
 
   // Re-center merged scene so AR placement is predictable.
@@ -142,5 +154,6 @@ export async function mergeGlbModels(modelUrls: string[]): Promise<string> {
   // Mark this URL as a blob so we can handle it specially for iOS
   ;(blobUrl as any).__isBlob = true
   
+  console.log(`✅ Successfully merged ${successfullyLoadedCount} model(s) into blob URL`)
   return blobUrl
 }
