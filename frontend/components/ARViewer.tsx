@@ -59,9 +59,19 @@ export function ARViewer({
   }
 
   const handleError = (event: any) => {
-    setError('Failed to load 3D model. Check that the .glb file exists and is accessible.')
+    const errorMsg = typeof event === 'string' 
+      ? event 
+      : event?.message || 'Unknown error'
+    
+    const fullError = `Failed to load 3D model from ${src}. ${errorMsg}`
+    setError(fullError)
     setIsLoading(false)
-    console.error('Model viewer error:', event)
+    console.error('🔴 Model viewer error:', {
+      source: src,
+      error: event,
+      errorMessage: fullError,
+      timestamp: new Date().toISOString(),
+    })
   }
 
   const normalizedSources = Array.isArray(sources)

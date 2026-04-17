@@ -48,10 +48,14 @@ export default function ModelViewerWrapper({
 
     const createMergedSource = async () => {
       if (normalizedSources.length <= 1) {
-        setResolvedSrc(normalizedSources[0] || src)
+        const finalSrc = normalizedSources[0] || src
+        console.log('📦 Using single model source:', finalSrc)
+        setResolvedSrc(finalSrc)
         return
       }
 
+      console.log('🔀 Attempting to merge multiple models:', normalizedSources)
+      
       try {
         const mergedUrl = await mergeGlbModels(normalizedSources)
         if (cancelled) {
@@ -59,15 +63,18 @@ export default function ModelViewerWrapper({
           return
         }
 
+        console.log('✅ Models merged successfully:', mergedUrl)
         setGeneratedBlobUrl((previousUrl) => {
           if (previousUrl) URL.revokeObjectURL(previousUrl)
           return mergedUrl
         })
         setResolvedSrc(mergedUrl)
       } catch (error) {
-        console.error('Failed to merge 3D models for AR:', error)
+        console.error('❌ Failed to merge 3D models for AR:', error)
+        const fallbackSrc = normalizedSources[0] || src
+        console.log('↩️ Falling back to first model:', fallbackSrc)
         onError(error)
-        setResolvedSrc(normalizedSources[0] || src)
+        setResolvedSrc(fallbackSrc)
       }
     }
 

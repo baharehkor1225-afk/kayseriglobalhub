@@ -9,14 +9,34 @@ type GLTFScene = {
   }
 }
 
+function resolveModelUrl(url: string): string {
+  // If already absolute (http/https/blob), use as-is
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:')) {
+    return url
+  }
+  
+  // Convert relative paths to absolute based on window location
+  if (typeof window !== 'undefined') {
+    const base = window.location.origin
+    if (url.startsWith('/')) {
+      return base + url
+    }
+    return base + '/' + url
+  }
+  
+  return url
+}
+
 function loadGltfModel(loader: any, url: string): Promise<GLTFScene> {
   return new Promise((resolve, reject) => {
+    const absoluteUrl = resolveModelUrl(url)
+    
     const onProgress = undefined
     const onError = (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)
-      if (message.includes('403') || message.includes('404')) {
-        reject(new Error(`Failed to load 3D model from ${url}. File may not exist or access denied.`))
-      } else if (message.includes('CORS')) {
+      if (message.includes('403') || message.includes('404') || message.includes('404')) {
+        reject(new Error(`Failed to load 3D model from ${url} (${absoluteUrl}). File may not exist or access denied.`))
+      } else if (message.includes('CORS') || message.includes('Cross-Origin')) {
         reject(new Error(`CORS error loading model from ${url}. Server may not support cross-origin requests.`))
       } else {
         reject(new Error(`Error loading model from ${url}: ${message}`))
@@ -24,7 +44,7 @@ function loadGltfModel(loader: any, url: string): Promise<GLTFScene> {
     }
     
     try {
-      loader.load(url, (gltf: GLTFScene) => resolve(gltf), onProgress, onError)
+      loader.load(absoluteUrl, (gltf: GLTFScene) => resolve(gltf), onProgress, onError)
     } catch (error) {
       onError(error)
     }
