@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronRight, View, Smartphone, ZoomIn } from 'lucide-react'
+import { Check, ChevronRight, View, Smartphone, ZoomIn } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ARViewer } from '@/components/ARViewer'
 import type { Product } from '@/lib/data'
@@ -17,6 +17,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
   const [activeImage, setActiveImage] = useState(0)
   const [is3DMode, setIs3DMode] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
+  const [selectedModelIndexes, setSelectedModelIndexes] = useState<number[]>([])
 
   // Support model3ds as array/string and legacy model3d.
   const rawModels = (product as any).model3ds
@@ -27,6 +28,36 @@ export function ProductGallery({ product }: ProductGalleryProps) {
     : product.model3d
     ? [product.model3d]
     : []
+
+  useEffect(() => {
+    // Keep all models selected by default so AR opens with everything visible.
+    setSelectedModelIndexes(models.map((_, index) => index))
+  }, [models.join('|')])
+
+  const selectedModelSources = useMemo(() => {
+    const selected = selectedModelIndexes
+      .map((index) => models[index])
+      .filter((model): model is string => typeof model === 'string' && model.trim().length > 0)
+
+    if (selected.length > 0) return selected
+    return models.length > 0 ? [models[0]] : []
+  }, [models, selectedModelIndexes])
+
+  const getModelLabel = (modelPath: string, index: number) => {
+    const fromPath = modelPath.split('/').pop() || modelPath
+    const sanitized = fromPath.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim()
+    return sanitized.length > 0 ? sanitized : `Model ${index + 1}`
+  }
+
+  const toggleModelSelection = (index: number) => {
+    setSelectedModelIndexes((prev) => {
+      if (prev.includes(index)) {
+        return prev.filter((item) => item !== index)
+      }
+
+      return [...prev, index]
+    })
+  }
 
   return (
     <div className="space-y-6">
@@ -77,8 +108,8 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         ) : (
           <div className="w-full h-full flex flex-col">
             <ARViewer
-              src={models[0] || '/models/placeholder.glb'}
-              sources={models}
+              src={selectedModelSources[0] || '/models/placeholder.glb'}
+              sources={selectedModelSources}
               alt={`${product.name} - 3D Model`}
               className="w-full flex-1"
               autoRotate={true}
@@ -86,6 +117,40 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               shadowIntensity={1}
               exposure={1}
             />
+            {models.length > 1 && (
+              <div className="border-t border-border/70 bg-background/95 backdrop-blur-sm p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">Tap models to add/remove in AR scene</p>
+                  <span className="text-xs font-medium text-foreground">
+                    {selectedModelSources.length}/{models.length} selected
+                  </span>
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {models.map((model, index) => {
+                    const isSelected = selectedModelIndexes.includes(index)
+
+                    return (
+                      <button
+                        key={`${model}-${index}`}
+                        onClick={() => toggleModelSelection(index)}
+                        className={cn(
+                          'shrink-0 rounded-full border px-3 py-2 text-xs font-medium transition-colors',
+                          isSelected
+                            ? 'border-accent bg-accent text-accent-foreground'
+                            : 'border-border bg-background text-muted-foreground hover:text-foreground'
+                        )}
+                        aria-pressed={isSelected}
+                      >
+                        <span className="inline-flex items-center gap-1.5">
+                          {isSelected && <Check className="h-3.5 w-3.5" />}
+                          {getModelLabel(model, index)}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
