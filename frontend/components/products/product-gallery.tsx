@@ -49,6 +49,13 @@ export function ProductGallery({ product }: ProductGalleryProps) {
     return sanitized.length > 0 ? sanitized : `Model ${index + 1}`
   }
 
+  const getModelThumbnail = (index: number) => {
+    // Prefer dedicated product images when available; fallback to first product image.
+    if (product.images[index]) return product.images[index]
+    if (product.images[0]) return product.images[0]
+    return ''
+  }
+
   const toggleModelSelection = (index: number) => {
     setSelectedModelIndexes((prev) => {
       if (prev.includes(index)) {
@@ -128,23 +135,45 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {models.map((model, index) => {
                     const isSelected = selectedModelIndexes.includes(index)
+                    const modelThumb = getModelThumbnail(index)
+                    const modelLabel = getModelLabel(model, index)
 
                     return (
                       <button
                         key={`${model}-${index}`}
                         onClick={() => toggleModelSelection(index)}
                         className={cn(
-                          'shrink-0 rounded-full border px-3 py-2 text-xs font-medium transition-colors',
+                          'relative shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all',
                           isSelected
-                            ? 'border-accent bg-accent text-accent-foreground'
-                            : 'border-border bg-background text-muted-foreground hover:text-foreground'
+                            ? 'border-accent ring-2 ring-accent/30'
+                            : 'border-border hover:border-muted-foreground'
                         )}
                         aria-pressed={isSelected}
+                        title={modelLabel}
                       >
-                        <span className="inline-flex items-center gap-1.5">
-                          {isSelected && <Check className="h-3.5 w-3.5" />}
-                          {getModelLabel(model, index)}
-                        </span>
+                        {modelThumb ? (
+                          <Image
+                            src={modelThumb}
+                            alt={modelLabel}
+                            fill
+                            className="object-cover"
+                            sizes="96px"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-muted flex items-center justify-center">
+                            <View className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                        )}
+
+                        <div className="absolute inset-x-0 bottom-0 bg-black/55 backdrop-blur-sm px-1.5 py-1">
+                          <p className="text-[10px] leading-tight text-white truncate">{modelLabel}</p>
+                        </div>
+
+                        {isSelected && (
+                          <span className="absolute top-1 right-1 w-5 h-5 rounded-full bg-accent text-accent-foreground flex items-center justify-center">
+                            <Check className="h-3 w-3" />
+                          </span>
+                        )}
                       </button>
                     )
                   })}
@@ -169,7 +198,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         </div>
 
         {/* 3D/AR Controls */}
-        <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
+        <div className={cn('absolute left-4 right-4 flex flex-col gap-2', is3DMode ? 'bottom-34' : 'bottom-4')}>
           <Button
             variant={is3DMode ? 'default' : 'secondary'}
             onClick={() => setIs3DMode(!is3DMode)}
